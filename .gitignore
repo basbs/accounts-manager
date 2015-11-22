@@ -1,0 +1,10 @@
+# For now, ignore resources (I don't want to accidentally check in any PDF forms).
+/src/main/resources
+
+# Ignore IntelliJ project files
+.idea/*
+*.iml
+
+# Ignore compiled code
+/target
+*.class
