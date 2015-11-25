@@ -23,6 +23,7 @@ data is parsed into value types managed by
 
 PDF manipulations are handled by [Apache PDFBox](http://pdfbox.apache.org/).
 
-The actual code is Java 8, and is built using Maven. Test cases are written
-using JUnit 4.8 and [Truth](https://github.com/google/truth).
-The code follows [Google Java Style](http://google.github.io/styleguide/javaguide.html).
+The actual code is Java 8, and is built using Maven. Object lifetime is
+managed by [Dagger](http://google.github.io/dagger/). Test cases are written
+using JUnit 4.8 and [Truth](https://github.com/google/truth). The code follows
+[Google Java Style](http://google.github.io/styleguide/javaguide.html).

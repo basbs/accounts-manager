@@ -1,31 +1,35 @@
 package net.pryden.accounts;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.model.Config;
 
-import java.io.IOException;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.YearMonth;
 
 /**
- * Very simple data storage API, based on YAML files.
+ * Very simple data storage API.
  */
+@Singleton
 final class Storage {
-  static final String CONFIG_FILE_NAME = ".accounts-manager.yaml";
+  private final String rootDir;
+  private final Marshaller marshaller;
 
-  private final ObjectMapper jackson;
-  private final Path configFilePath;
-
-  Storage(String userHomePath) {
-    jackson = new ObjectMapper(new YAMLFactory());
-    configFilePath = Paths.get(userHomePath, CONFIG_FILE_NAME);
+  @Inject
+  Storage(Config config, Marshaller marshaller) {
+    this.rootDir = config.rootDir();
+    this.marshaller = marshaller;
   }
 
-  Config readConfig() throws IOException {
-    return jackson.readValue(configFilePath.toFile(), Config.class);
+  AccountsMonth readMonth(YearMonth date) {
+    Path monthPath = Paths.get(rootDir, date.toString());
+    return marshaller.read(monthPath, AccountsMonth.class);
   }
 
-  void writeConfig(Config config) throws IOException {
-    jackson.writeValue(configFilePath.toFile(), config);
+  void writeMonth(AccountsMonth month) {
+    Path monthPath = Paths.get(rootDir, month.date().toString());
+    marshaller.write(monthPath, month);
   }
 }

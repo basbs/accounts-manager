@@ -1,4 +1,4 @@
-package net.pryden.accounts;
+package net.pryden.accounts.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -9,62 +9,69 @@ import com.google.auto.value.AutoValue;
  */
 @AutoValue
 @JsonDeserialize(builder = AutoValue_Config.Builder.class)
-abstract class Config {
+public abstract class Config {
   Config() {}
 
   /** The congregation name, e.g. "North Congregation". */
   @JsonProperty("congregation-name")
-  abstract String congregationName();
+  public abstract String congregationName();
 
   /** The city the congregation is in. */
   @JsonProperty("congregation-city")
-  abstract String congregationCity();
+  public abstract String congregationCity();
 
   /** The state the congregation is in. */
   @JsonProperty("congregation-state")
-  abstract String congregationState();
+  public abstract String congregationState();
 
   /** The path to the Accounts Sheet (S-26) PDF form template. */
   @JsonProperty("accounts-sheet-form-path")
-  abstract String accountsSheetFormPath();
+  public abstract String accountsSheetFormPath();
 
   /** The path to the Record of Electronic Funds Transfer (TO-62) PDF form template. */
   @JsonProperty("funds-transfer-form-path")
-  abstract String fundsTransferFormPath();
+  public abstract String fundsTransferFormPath();
 
-  /** The path to the Montly Congregation Accounts Report (S-30) PDF form template. */
+  /** The path to the Monthly Congregation Accounts Report (S-30) PDF form template. */
   @JsonProperty("accounts-report-form-path")
-  abstract String accountsReportFormPath();
+  public abstract String accountsReportFormPath();
+
+  /** The path to the root directory where each month's files are stored. */
+  @JsonProperty("root-dir")
+  public abstract String rootDir();
 
   /** Returns a new {@link Builder} instance. */
-  static Builder builder() {
+  public static Builder builder() {
     return new AutoValue_Config.Builder();
   }
 
   /** Builder for {@link Config} instances. */
   @AutoValue.Builder
-  abstract static class Builder {
+  public abstract static class Builder {
     Builder() {}
 
     @JsonProperty("congregation-name")
-    abstract Builder setCongregationName(String name);
+    public abstract Builder setCongregationName(String name);
 
     @JsonProperty("congregation-city")
-    abstract Builder setCongregationCity(String city);
+    public abstract Builder setCongregationCity(String city);
 
     @JsonProperty("congregation-state")
-    abstract Builder setCongregationState(String state);
+    public abstract Builder setCongregationState(String state);
 
     @JsonProperty("accounts-sheet-form-path")
-    abstract Builder setAccountsSheetFormPath(String path);
+    public abstract Builder setAccountsSheetFormPath(String path);
 
     @JsonProperty("funds-transfer-form-path")
-    abstract Builder setFundsTransferFormPath(String path);
+    public abstract Builder setFundsTransferFormPath(String path);
 
     @JsonProperty("accounts-report-form-path")
-    abstract Builder setAccountsReportFormPath(String path);
+    public abstract Builder setAccountsReportFormPath(String path);
+
+    @JsonProperty("root-dir")
+    public abstract Builder setRootDir(String path);
 
     /** Builds a new {@link Config} instance. */
-    abstract Config build();
+    public abstract Config build();
   }
 }
