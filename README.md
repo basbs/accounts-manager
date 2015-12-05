@@ -9,6 +9,20 @@ I do not own the copyright in the forms: they must be downloaded from jw.org
 by someone with the appropriate access. This utility simply makes it easier
 to keep track of accounting information and fill in the forms.
 
+## Building
+
+To build this project you need a recent version of
+[Apache Maven](http://maven.apache.org/).
+
+Open a command line and navigate to the directory where this file is located,
+then run:
+
+    mvn package
+
+This will create an executable `AccountsManager` script under
+`target/AccountsManager/bin`, and also a zip file of the compiled application
+named `accounts-manager-<version>-full.zip` under `target`.
+
 ## About the code
 
 Each month's data is stored in [YAML](http://yaml.org) format. Global

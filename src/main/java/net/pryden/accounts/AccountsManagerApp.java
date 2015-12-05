@@ -5,7 +5,9 @@ import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 import net.pryden.accounts.Annotations.UserHomeDir;
-import net.pryden.accounts.commands.Dispatcher;
+import net.pryden.accounts.commands.Command;
+import net.pryden.accounts.commands.CommandsModule;
+import net.pryden.accounts.commands.CurrentCommand;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,6 +19,7 @@ final class AccountsManagerApp implements Runnable {
   @Singleton
   @Component(modules = {
       TopLevelModule.class,
+      CommandsModule.class,
       StorageModule.class
   })
   interface Root {
@@ -32,7 +35,7 @@ final class AccountsManagerApp implements Runnable {
     }
 
     @Provides
-    @Args
+    @CommandLineArgs
     ImmutableList<String> provideArgs() {
       return args;
     }
@@ -51,15 +54,15 @@ final class AccountsManagerApp implements Runnable {
     root.app().run();
   }
 
-  private final Dispatcher dispatcher;
+  private final Command command;
 
   @Inject
-  AccountsManagerApp(Dispatcher dispatcher) {
-    this.dispatcher = dispatcher;
+  AccountsManagerApp(@CurrentCommand Command command) {
+    this.command = command;
   }
 
   @Override
   public void run() {
-    dispatcher.determineCommand().run();
+    command.run();
   }
 }
