@@ -28,8 +28,8 @@ final class AddReceiptsCommand implements Command {
   @Override
   public void run() throws Exception {
     int date = console.readInt("Date (day of the month): ");
-    BigDecimal cong = console.readMoney("Local Congregation Expenses: ", BigDecimal.ZERO);
     BigDecimal worldwide = console.readMoney("Worldwide Work: ", BigDecimal.ZERO);
+    BigDecimal cong = console.readMoney("Local Congregation Expenses: ", BigDecimal.ZERO);
 
     List<Transaction> transactions = new ArrayList<>();
     if (!cong.equals(BigDecimal.ZERO)) {

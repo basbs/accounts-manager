@@ -12,6 +12,12 @@ import net.pryden.accounts.commands.Annotations.ForCommand;
 @Module
 public final class AllCommandsModule {
   @Provides(type = Type.MAP)
+  @ForCommand("add-deposit")
+  Command provideAddDepositCommand(AddDepositCommand command) {
+    return command;
+  }
+
+  @Provides(type = Type.MAP)
   @ForCommand("add-expense")
   Command provideAddExpenseCommand(AddExpenseCommand command) {
     return command;

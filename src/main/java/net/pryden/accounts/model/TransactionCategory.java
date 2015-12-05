@@ -10,8 +10,8 @@ import java.util.Locale;
 public enum TransactionCategory {
   LOCAL_CONGREGATION_EXPENSES('C'),
   WORLDWIDE_WORK('W'),
-  DEPOSIT('D'),
   EXPENSE('E'),
+  DEPOSIT('D'),
   OTHER(' ');
 
   private static final ImmutableMap<Character, TransactionCategory> LOOKUP;

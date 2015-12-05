@@ -77,7 +77,7 @@ public final class Console {
         return defaultValue;
       }
       try {
-        return new BigDecimal(line);
+        return new BigDecimal(line).setScale(2, BigDecimal.ROUND_HALF_EVEN);
       } catch (NumberFormatException ex) {
         out.printf("Unable to parse \"%s\" as a decimal. Please enter a different value.\n", line);
       }

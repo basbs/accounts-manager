@@ -12,6 +12,7 @@ final class HelpCommand implements Command {
         "Usage: AccountsManagerApp <command> [args]\n"
             + "\n"
             + "Commands:\n"
+            + "    add-deposit: Adds a deposit to the current month.\n"
             + "    add-expense: Add an expense item to the current month.\n"
             + "    add-receipts: Add receipts to the current month.\n"
             + "    dump-month: Dump the current month in JSON format.\n"
