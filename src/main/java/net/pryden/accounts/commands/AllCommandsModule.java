@@ -30,6 +30,12 @@ public final class AllCommandsModule {
   }
 
   @Provides(type = Type.MAP)
+  @ForCommand("dump-config")
+  Command provideDumpConfigCommand(DumpConfigCommand command) {
+    return command;
+  }
+
+  @Provides(type = Type.MAP)
   @ForCommand("dump-month")
   Command provideDumpMonthCommand(DumpMonthCommand command) {
     return command;

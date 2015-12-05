@@ -14,16 +14,18 @@ import java.nio.file.Path;
  * <p>This implementation is just a thin wrapper over the Jackson API.
  */
 @Singleton
-final class Marshaller {
+public final class Marshaller {
+  private final Console console;
   private final ObjectMapper jackson;
 
   @Inject
-  Marshaller() {
-    jackson = new ObjectMapper(new YAMLFactory());
+  Marshaller(Console console) {
+    this.console = console;
+    this.jackson = new ObjectMapper(new YAMLFactory());
   }
 
   /** Reads an object from disk at the specified path. */
-  <T> T read(Path path, Class<T> type) {
+  public <T> T read(Path path, Class<T> type) {
     try {
       return jackson.readValue(path.toFile(), type);
     } catch (IOException ex) {
@@ -32,7 +34,7 @@ final class Marshaller {
   }
 
   /** Writes an object to disk at the specified path. */
-  <T> void write(Path path, T value) {
+  public <T> void write(Path path, T value) {
     try {
       jackson.writeValue(path.toFile(), value);
     } catch (IOException ex) {
@@ -40,8 +42,17 @@ final class Marshaller {
     }
   }
 
+  /** Dumps an object to the console. */
+  public <T> void dumpToConsole(T value) {
+    try {
+      jackson.writeValue(console.out(), value);
+    } catch (IOException ex) {
+      throw new MarshallingException(ex);
+    }
+  }
+
   /** Exception that indicates an error when reading or writing objects from disk. */
-  static final class MarshallingException extends RuntimeException {
+  public static final class MarshallingException extends RuntimeException {
     MarshallingException(Throwable t) {
       super(t);
     }

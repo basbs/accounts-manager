@@ -46,7 +46,7 @@ public final class MarshallerTest {
 
   @Before
   public void setUp() throws IOException {
-    marshaller = new Marshaller();
+    marshaller = new Marshaller(TestConsoleFactory.createWithoutExpectedInput().console());
     path = temp.newFile("temp_config.yaml").toPath();
   }
 
