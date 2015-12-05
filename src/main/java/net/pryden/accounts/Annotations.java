@@ -10,5 +10,13 @@ final class Annotations {
 
   @Qualifier
   @Retention(RetentionPolicy.RUNTIME)
+  @interface SystemIn {}
+
+  @Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface SystemOut {}
+
+  @Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
   @interface UserHomeDir {}
 }

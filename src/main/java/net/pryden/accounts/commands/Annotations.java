@@ -26,4 +26,12 @@ final class Annotations {
   @Qualifier
   @Retention(RetentionPolicy.RUNTIME)
   @interface CommandArgs {}
+
+  /**
+   * Annotates a {@code YearMonth} object representing the current month. The value is derived
+   * either from the {@code Config} or else from a command-line argument.
+   */
+  @Qualifier
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface CurrentMonth {}
 }

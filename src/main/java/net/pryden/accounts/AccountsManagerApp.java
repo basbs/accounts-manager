@@ -4,6 +4,8 @@ import com.google.common.collect.ImmutableList;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
+import net.pryden.accounts.Annotations.SystemIn;
+import net.pryden.accounts.Annotations.SystemOut;
 import net.pryden.accounts.Annotations.UserHomeDir;
 import net.pryden.accounts.commands.Command;
 import net.pryden.accounts.commands.CommandsModule;
@@ -11,11 +13,13 @@ import net.pryden.accounts.commands.CurrentCommand;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * Main class that bootstraps the application.
  */
-final class AccountsManagerApp implements Runnable {
+final class AccountsManagerApp {
   @Singleton
   @Component(modules = {
       TopLevelModule.class,
@@ -45,6 +49,18 @@ final class AccountsManagerApp implements Runnable {
     String provideUserHomeDir() {
       return System.getProperty("user.home");
     }
+
+    @Provides
+    @SystemIn
+    InputStream provideSystemIn() {
+      return System.in;
+    }
+
+    @Provides
+    @SystemOut
+    PrintStream provideSystemOut() {
+      return System.out;
+    }
   }
 
   public static void main(String[] args) throws Exception {
@@ -61,8 +77,7 @@ final class AccountsManagerApp implements Runnable {
     this.command = command;
   }
 
-  @Override
-  public void run() {
+  void run() throws Exception {
     command.run();
   }
 }

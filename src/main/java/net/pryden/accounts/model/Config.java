@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 
+import java.time.YearMonth;
+
 /**
  * Configuration for the AccountsManager tool.
  */
@@ -40,6 +42,17 @@ public abstract class Config {
   @JsonProperty("root-dir")
   public abstract String rootDir();
 
+  /**
+   * The current month. This is not necessarily the actual current calendar month, but rather the
+   * month that is currently open and being worked on.
+   */
+  public abstract YearMonth currentMonth();
+
+  @JsonProperty("current-month")
+  String serializedCurrentMonth() {
+    return currentMonth().toString();
+  }
+
   /** Returns a new {@link Builder} instance. */
   public static Builder builder() {
     return new AutoValue_Config.Builder();
@@ -70,6 +83,13 @@ public abstract class Config {
 
     @JsonProperty("root-dir")
     public abstract Builder setRootDir(String path);
+
+    @JsonProperty("current-month")
+    Builder setCurrentMonth(String yearMonth) {
+      return setCurrentMonth(YearMonth.parse(yearMonth));
+    }
+
+    public abstract Builder setCurrentMonth(YearMonth yearMonth);
 
     /** Builds a new {@link Config} instance. */
     public abstract Config build();

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.YearMonth;
 
 @RunWith(JUnit4.class)
 public final class MarshallerTest {
@@ -27,6 +28,7 @@ public final class MarshallerTest {
       .setFundsTransferFormPath("/home/user/forms/TO-62-E.pdf")
       .setAccountsReportFormPath("/home/user/forms/S-30-E.pdf")
       .setRootDir("/home/user/accounts")
+      .setCurrentMonth(YearMonth.of(2015, 11))
       .build();
 
   private static final String SAMPLE_CONFIG_STRING = ""
@@ -36,7 +38,8 @@ public final class MarshallerTest {
       + "accounts-sheet-form-path: /home/user/forms/S-26-E.pdf\n"
       + "funds-transfer-form-path: /home/user/forms/TO-62-E.pdf\n"
       + "accounts-report-form-path: /home/user/forms/S-30-E.pdf\n"
-      + "root-dir: /home/user/accounts\n";
+      + "root-dir: /home/user/accounts\n"
+      + "current-month: 2015-11\n";
 
   private Marshaller marshaller;
   private Path path;

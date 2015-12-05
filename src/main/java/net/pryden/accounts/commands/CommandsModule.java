@@ -1,22 +1,29 @@
 package net.pryden.accounts.commands;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import dagger.Module;
 import dagger.Provides;
-import dagger.Provides.Type;
 import net.pryden.accounts.CommandLineArgs;
 import net.pryden.accounts.commands.Annotations.CommandArgs;
-import net.pryden.accounts.commands.Annotations.ForCommand;
+import net.pryden.accounts.commands.Annotations.CurrentMonth;
+import net.pryden.accounts.model.Config;
 
 import javax.inject.Provider;
+import javax.inject.Singleton;
+import java.time.YearMonth;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Module that binds all the {@link Command} implementations in this package.
+ * Module that binds all the {@link Command} implementations in this package, plus various bindings
+ * that they use.
  */
-@Module
+@Module(includes = {AllCommandsModule.class})
 public final class CommandsModule {
   @Provides
+  @Singleton
   @CurrentCommand
   String provideCommandName(@CommandLineArgs ImmutableList<String> args) {
     if (args.isEmpty()) {
@@ -26,21 +33,37 @@ public final class CommandsModule {
   }
 
   @Provides
+  @Singleton
   @CommandArgs
-  ImmutableList<String> provideCommandArgs(@CommandLineArgs ImmutableList<String> args) {
-    if (args.size() <= 1) {
-      return ImmutableList.of();
+  ImmutableMap<String, String> provideCommandArgs(@CommandLineArgs ImmutableList<String> args) {
+    ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+    // Skip the first arg, it's the @CurrentCommand String
+    for (int i = 1; i < args.size(); i++) {
+      final String arg = args.get(i);
+      if (!arg.startsWith("--")) {
+        throw new IllegalArgumentException("Unexpected command line arg: " + arg);
+      }
+      List<String> parts = Splitter.on('=').splitToList(arg.substring(2));
+      if (parts.size() != 2) {
+        throw new IllegalArgumentException("Unparseable command line arg: " + arg);
+      }
+      builder.put(parts.get(0), parts.get(1));
     }
-    return args.subList(1, args.size());
-  }
-
-  @Provides(type = Type.MAP)
-  @ForCommand("help")
-  Command provideHelpCommand(HelpCommand command) {
-    return command;
+    return builder.build();
   }
 
   @Provides
+  @Singleton
+  @CurrentMonth
+  YearMonth provideCurrentMonth(Config config, @CommandArgs ImmutableMap<String, String> args) {
+    if (args.containsKey("month")) {
+      return YearMonth.parse(args.get("month"));
+    }
+    return config.currentMonth();
+  }
+
+  @Provides
+  @Singleton
   @CurrentCommand
   Command provideCommand(
       @CurrentCommand String commandName,

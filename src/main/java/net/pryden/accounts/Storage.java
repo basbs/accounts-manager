@@ -13,7 +13,9 @@ import java.time.YearMonth;
  * Very simple data storage API.
  */
 @Singleton
-final class Storage {
+public final class Storage {
+  private static final String ACCOUNTS_FILE_NAME = "accounts.yaml";
+
   private final String rootDir;
   private final Marshaller marshaller;
 
@@ -23,13 +25,13 @@ final class Storage {
     this.marshaller = marshaller;
   }
 
-  AccountsMonth readMonth(YearMonth date) {
-    Path monthPath = Paths.get(rootDir, date.toString());
+  public AccountsMonth readMonth(YearMonth date) {
+    Path monthPath = Paths.get(rootDir, date.toString(), ACCOUNTS_FILE_NAME);
     return marshaller.read(monthPath, AccountsMonth.class);
   }
 
-  void writeMonth(AccountsMonth month) {
-    Path monthPath = Paths.get(rootDir, month.date().toString());
+  public void writeMonth(AccountsMonth month) {
+    Path monthPath = Paths.get(rootDir, month.date().toString(), ACCOUNTS_FILE_NAME);
     marshaller.write(monthPath, month);
   }
 }
