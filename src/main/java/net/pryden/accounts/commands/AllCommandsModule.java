@@ -36,6 +36,12 @@ public final class AllCommandsModule {
   }
 
   @Provides(type = Type.MAP)
+  @ForCommand("generate-forms")
+  Command provideGenerateFormsCommand(GenerateFormsCommand command) {
+    return command;
+  }
+
+  @Provides(type = Type.MAP)
   @ForCommand("help")
   Command provideHelpCommand(HelpCommand command) {
     return command;

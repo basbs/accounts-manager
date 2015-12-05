@@ -30,14 +30,12 @@
                 <configuration>
                     <programs>
                         <program>
-                            <id>accounts-manager</id>
+                            <id>AccountsManager</id>
                             <mainClass>net.pryden.accounts.AccountsManagerApp</mainClass>
-                            <name>AccountsManager</name>
                         </program>
                         <program>
-                            <id>field-mapping-tool</id>
+                            <id>PdfFieldMappingTool</id>
                             <mainClass>net.pryden.accounts.PdfFieldMappingTool</mainClass>
-                            <name>PdfFieldMappingTool</name>
                         </program>
                     </programs>
                     <assembleDirectory>${project.build.directory}/AccountsManager</assembleDirectory>

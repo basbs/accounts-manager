@@ -16,6 +16,7 @@ final class HelpCommand implements Command {
             + "    add-expense: Add an expense item to the current month.\n"
             + "    add-receipts: Add receipts to the current month.\n"
             + "    dump-month: Dump the current month in JSON format.\n"
+            + "    generate-forms: Generate PDF forms in the current month's folder.\n"
             + "    help: Show this help.\n"
             + "\n"
             + "Common arguments:\n"

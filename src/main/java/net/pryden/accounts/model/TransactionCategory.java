@@ -32,7 +32,7 @@ public enum TransactionCategory {
   }
 
   public static TransactionCategory fromCode(String code) {
-    return fromCode(code.toUpperCase(Locale.ENGLISH).charAt(0));
+    return fromCode(code.toUpperCase(Locale.US).charAt(0));
   }
 
   private final char code;
