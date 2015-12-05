@@ -3,6 +3,7 @@ package net.pryden.accounts.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 
 import java.time.YearMonth;
 
@@ -42,6 +43,10 @@ public abstract class Config {
   @JsonProperty("root-dir")
   public abstract String rootDir();
 
+  /** The resolutions currently active for sending extra funds to the branch each month. */
+  @JsonProperty("branch-resolutions")
+  public abstract ImmutableList<BranchResolution> branchResolutions();
+
   /**
    * The current month. This is not necessarily the actual current calendar month, but rather the
    * month that is currently open and being worked on.
@@ -53,6 +58,9 @@ public abstract class Config {
     return currentMonth().toString();
   }
 
+  /** Returns a {@link Builder} instance initialized with this object's fields. */
+  public abstract Builder toBuilder();
+
   /** Returns a new {@link Builder} instance. */
   public static Builder builder() {
     return new AutoValue_Config.Builder();
@@ -61,7 +69,9 @@ public abstract class Config {
   /** Builder for {@link Config} instances. */
   @AutoValue.Builder
   public abstract static class Builder {
-    Builder() {}
+    Builder() {
+      setBranchResolutions(ImmutableList.of());
+    }
 
     @JsonProperty("congregation-name")
     public abstract Builder setCongregationName(String name);
@@ -83,6 +93,13 @@ public abstract class Config {
 
     @JsonProperty("root-dir")
     public abstract Builder setRootDir(String path);
+
+    public abstract Builder setBranchResolutions(ImmutableList<BranchResolution> branchResolutions);
+
+    @JsonProperty("branch-resolutions")
+    Builder setBranchResolutions(Iterable<BranchResolution> branchResolutions) {
+      return setBranchResolutions(ImmutableList.copyOf(branchResolutions));
+    }
 
     @JsonProperty("current-month")
     Builder setCurrentMonth(String yearMonth) {

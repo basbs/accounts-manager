@@ -8,17 +8,17 @@ import java.util.Locale;
  * Enum of possible transaction categories.
  */
 public enum TransactionCategory {
-  LOCAL_CONGREGATION_EXPENSES('C'),
-  WORLDWIDE_WORK('W'),
-  EXPENSE('E'),
-  DEPOSIT('D'),
-  OTHER(' ');
+  WORLDWIDE_WORK('W', 1),
+  LOCAL_CONGREGATION_EXPENSES('C', 2),
+  EXPENSE('E', 3),
+  DEPOSIT('D', 4),
+  OTHER(' ', 5);
 
   private static final ImmutableMap<Character, TransactionCategory> LOOKUP;
   static {
     ImmutableMap.Builder<Character, TransactionCategory> builder = ImmutableMap.builder();
     for (TransactionCategory category : TransactionCategory.values()) {
-      builder.put(category.code(), category);
+      builder.put(category.code, category);
     }
     LOOKUP = builder.build();
   }
@@ -32,16 +32,28 @@ public enum TransactionCategory {
   }
 
   public static TransactionCategory fromCode(String code) {
+    if (code.equals("None")) {
+      return OTHER;
+    }
     return fromCode(code.toUpperCase(Locale.US).charAt(0));
   }
 
   private final char code;
+  private final int ordering;
 
-  TransactionCategory(char code) {
+  TransactionCategory(char code, int ordering) {
     this.code = code;
+    this.ordering = ordering;
   }
 
-  public char code() {
-    return code;
+  public String codeAsString() {
+    return String.valueOf(code);
+  }
+
+  public String serializedForm() {
+    if (this == OTHER) {
+      return "None";
+    }
+    return String.valueOf(code);
   }
 }

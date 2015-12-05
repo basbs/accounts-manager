@@ -1,0 +1,14 @@
+package net.pryden.accounts.model;
+
+/**
+ * Possible types of resolutions for funds sent to the branch.
+ */
+public enum BranchResolutionType {
+  WORLDWIDE_WORK_FROM_CONTRIBUTION_BOXES,
+  WORLDWIDE_WORK_RESOLUTION,
+  KINGDOM_HALL_AND_ASSEMBLY_HALL_WORLDWIDE,
+  GLOBAL_ASSISTANCE_ARRANGEMENT,
+  TRAVELING_OVERSEER_ASSISTANCE_ARRANGEMENT,
+  PAYMENT_OF_CHARGES_ON_ACCOUNT,
+  OTHER;
+}

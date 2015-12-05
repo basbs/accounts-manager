@@ -3,6 +3,7 @@ package net.pryden.accounts;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,7 +38,7 @@ final class PdfFieldMappingTool {
       }
 
       for (PDField field : form.getFieldTree()) {
-        if (!field.isReadOnly()) {
+        if (!field.isReadOnly() && field instanceof PDTextField) {
           field.setValue(field.getFullyQualifiedName());
         }
         System.out.printf("Field %s\n", field.getFullyQualifiedName());

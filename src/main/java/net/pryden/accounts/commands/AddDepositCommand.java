@@ -4,6 +4,7 @@ import net.pryden.accounts.Console;
 import net.pryden.accounts.Storage;
 import net.pryden.accounts.commands.Annotations.CurrentMonth;
 import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.model.ComputedTotals;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
@@ -26,27 +27,22 @@ final class AddDepositCommand implements Command {
   @Override
   public void run() throws Exception {
     AccountsMonth month = storage.readMonth(currentMonth);
-    BigDecimal receiptsBalance = BigDecimal.ZERO;
-    for (Transaction transaction : month.transactions()) {
-      receiptsBalance = receiptsBalance
-          .add(transaction.receiptsIn())
-          .subtract(transaction.receiptsOut());
-
-    }
-    if (receiptsBalance.equals(BigDecimal.ZERO)) {
+    ComputedTotals totals = month.computeTotals();
+    if (totals.receiptsOutstandingBalance().equals(BigDecimal.ZERO)) {
       if (!console.readConfirmation("There is currently no receipts balance for %s. "
           + "Are you sure you want to make a deposit?", currentMonth)) {
         return;
       }
     }
     int date = console.readInt("Date (day of the month): ");
+    String description = console.readString("Description [Deposit to checking account]: ");
     BigDecimal amount = console.readMoney(
-        String.format("Amount to deposit [%s]: ", receiptsBalance),
-        receiptsBalance);
+        String.format("Amount to deposit [%s]: ", totals.receiptsOutstandingBalance()),
+        totals.receiptsOutstandingBalance());
 
     AccountsMonth updated = month.withNewTransactions(Transaction.builder()
         .setDate(date)
-        .setDescription("Deposit to checking account")
+        .setDescription(description)
         .setCategory(TransactionCategory.DEPOSIT)
         .setReceiptsOut(amount)
         .setCheckingIn(amount)

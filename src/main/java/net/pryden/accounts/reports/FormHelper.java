@@ -2,10 +2,13 @@ package net.pryden.accounts.reports;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.form.PDAcroForm;
+import org.apache.pdfbox.pdmodel.interactive.form.PDCheckbox;
 import org.apache.pdfbox.pdmodel.interactive.form.PDField;
+import org.apache.pdfbox.pdmodel.interactive.form.PDTextField;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 
 /**
@@ -42,13 +45,46 @@ final class FormHelper implements AutoCloseable {
     this.outputFile = outputFile;
   }
 
-  void setValue(String fieldName, String value) throws IOException {
+  private PDField getField(String fieldName) {
     PDField field = form.getField(fieldName);
     if (field == null) {
       throw new IllegalArgumentException(
           String.format("No such field %s in form %s", fieldName, formFilePath));
     }
-    field.setValue(value);
+    return field;
+  }
+
+  void setValue(String fieldName, String value) throws IOException {
+    ((PDTextField) getField(fieldName)).setValue(value);
+  }
+
+  void setMoney(String fieldName, BigDecimal value) throws IOException {
+    setValue(fieldName, formatMoney(value));
+  }
+
+  void setMoneyPreserveZero(String fieldName, BigDecimal value) throws IOException {
+    setValue(fieldName, formatMoneyPreserveZero(value));
+  }
+
+  void setCheckBox(String fieldName, boolean checked) throws IOException {
+    PDCheckbox checkbox = ((PDCheckbox) getField(fieldName));
+    if (checked) {
+      checkbox.check();
+    } else {
+      checkbox.unCheck();
+    }
+  }
+
+
+  static String formatMoney(BigDecimal value) {
+    if (value.equals(BigDecimal.ZERO)) {
+      return "";
+    }
+    return formatMoneyPreserveZero(value);
+  }
+
+  static String formatMoneyPreserveZero(BigDecimal value) {
+    return value.setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString();
   }
 
   void save() throws IOException {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.ImmutableList;
 
 import java.math.BigDecimal;
 
@@ -31,7 +32,7 @@ public abstract class Transaction implements Comparable<Transaction> {
 
   @JsonProperty("category")
   String serializedCategory() {
-    return String.valueOf(category().code());
+    return category().serializedForm();
   }
 
   /** The value of money received as receipts. */
@@ -50,6 +51,12 @@ public abstract class Transaction implements Comparable<Transaction> {
   @JsonProperty("checking-out")
   public abstract BigDecimal checkingOut();
 
+  /**
+   * Sub-transactions of this transaction. Only branch transfers typically have these.
+   */
+  @JsonProperty("sub-transactions")
+  public abstract ImmutableList<SubTransaction> subTransactions();
+
   @Override
   public int compareTo(Transaction other) {
     return ComparisonChain.start()
@@ -67,10 +74,12 @@ public abstract class Transaction implements Comparable<Transaction> {
   @AutoValue.Builder
   public abstract static class Builder {
     Builder() {
+      // Default values
       setReceiptsIn(BigDecimal.ZERO);
       setReceiptsOut(BigDecimal.ZERO);
       setCheckingIn(BigDecimal.ZERO);
       setCheckingOut(BigDecimal.ZERO);
+      setSubTransactions(ImmutableList.of());
     }
 
     @JsonProperty("date")
@@ -97,6 +106,13 @@ public abstract class Transaction implements Comparable<Transaction> {
 
     @JsonProperty("checking-out")
     public abstract Builder setCheckingOut(BigDecimal checkingOut);
+
+    public abstract Builder setSubTransactions(ImmutableList<SubTransaction> subTransactions);
+
+    @JsonProperty("sub-transactions")
+    Builder setSubTransactions(Iterable<SubTransaction> subTransactions) {
+      return setSubTransactions(ImmutableList.copyOf(subTransactions));
+    }
 
     public abstract Transaction build();
   }

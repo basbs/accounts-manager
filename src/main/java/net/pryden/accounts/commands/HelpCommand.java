@@ -15,6 +15,7 @@ final class HelpCommand implements Command {
             + "    add-deposit: Adds a deposit to the current month.\n"
             + "    add-expense: Add an expense item to the current month.\n"
             + "    add-receipts: Add receipts to the current month.\n"
+            + "    close-month: Close the current month and compute totals.\n"
             + "    dump-config: Dump the current config data to console.\n"
             + "    dump-month: Dump the current month data to console.\n"
             + "    generate-forms: Generate PDF forms in the current month's folder.\n"
