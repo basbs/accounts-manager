@@ -95,6 +95,8 @@ public abstract class AccountsMonth {
       BigDecimal totalReceiptsOut = BigDecimal.ZERO;
       BigDecimal totalCheckingIn = BigDecimal.ZERO;
       BigDecimal totalCheckingOut = BigDecimal.ZERO;
+      BigDecimal totalCongregationExpenses = BigDecimal.ZERO;
+      BigDecimal totalWorldwideTransfer = BigDecimal.ZERO;
       BigDecimal receiptsBalance = receiptsCarriedForward();
       BigDecimal checkingBalance = openingBalance();
 
@@ -119,6 +121,18 @@ public abstract class AccountsMonth {
         totalReceiptsOut = totalReceiptsOut.add(transaction.receiptsOut());
         totalCheckingIn = totalCheckingIn.add(transaction.checkingIn());
         totalCheckingOut = totalCheckingOut.add(transaction.checkingOut());
+        if (transaction.category() == TransactionCategory.EXPENSE) {
+          totalCongregationExpenses = totalCongregationExpenses.add(transaction.checkingOut());
+        }
+        for (SubTransaction subTransaction : transaction.subTransactions()) {
+          if (subTransaction.category() == TransactionCategory.EXPENSE) {
+            totalCongregationExpenses = totalCongregationExpenses.add(subTransaction.amount());
+          }
+          if (subTransaction.type()
+              == BranchResolutionType.WORLDWIDE_WORK_FROM_CONTRIBUTION_BOXES) {
+            totalWorldwideTransfer = totalWorldwideTransfer.add(subTransaction.amount());
+          }
+        }
         receiptsBalance = receiptsBalance
             .add(transaction.receiptsIn())
             .subtract(transaction.receiptsOut());
@@ -134,6 +148,8 @@ public abstract class AccountsMonth {
           .setTotalReceiptsOut(totalReceiptsOut)
           .setTotalCheckingIn(totalCheckingIn)
           .setTotalCheckingOut(totalCheckingOut)
+          .setTotalCongregationExpenses(totalCongregationExpenses)
+          .setTotalWorldwideTransfer(totalWorldwideTransfer)
           .setReceiptsOutstandingBalance(receiptsBalance)
           .setCheckingBalance(checkingBalance)
           .setTotalOfAllBalances(receiptsBalance.add(checkingBalance))

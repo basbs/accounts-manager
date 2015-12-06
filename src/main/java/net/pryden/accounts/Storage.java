@@ -6,6 +6,7 @@ import net.pryden.accounts.model.Config;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.YearMonth;
@@ -35,7 +36,11 @@ public final class Storage {
   }
 
   public void writeMonth(AccountsMonth month) {
-    Path monthPath = Paths.get(rootDir, month.date().toString(), ACCOUNTS_FILE_NAME);
+    File monthDir = Paths.get(rootDir, month.date().toString()).toFile();
+    if (!monthDir.exists()) {
+      monthDir.mkdirs();
+    }
+    Path monthPath = Paths.get(monthDir.getPath(), ACCOUNTS_FILE_NAME);
     marshaller.write(monthPath, month);
   }
 

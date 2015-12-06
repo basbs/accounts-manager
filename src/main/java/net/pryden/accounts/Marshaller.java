@@ -45,7 +45,7 @@ public final class Marshaller {
   /** Dumps an object to the console. */
   public <T> void dumpToConsole(T value) {
     try {
-      jackson.writeValue(console.out(), value);
+      console.print(jackson.writeValueAsString(value));
     } catch (IOException ex) {
       throw new MarshallingException(ex);
     }

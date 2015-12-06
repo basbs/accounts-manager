@@ -34,16 +34,15 @@ public final class AccountsSheetForm {
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);
     try (FormHelper form = FormHelper.create(config.accountsSheetFormPath(), outputFilePath)) {
       new AccountsSheetGenerator(config, month, form).run();
-      if (console.readConfirmation("Write %s?", outputFilePath)) {
-        form.save();
-      }
+      console.printf("Writing %s\n", outputFilePath);
+      form.save();
     }
   }
 
   /** Helper class to actually populate the form. */
   private static final class AccountsSheetGenerator {
     private static final DateTimeFormatter MONTH_ENDING_FORMAT =
-        DateTimeFormatter.ofPattern("MMMM d, uuuu");
+        DateTimeFormatter.ofPattern("MMMM d, uuuu", Locale.US);
 
     private static final DateTimeFormatter MONTH_NAME =
         DateTimeFormatter.ofPattern("MMMM", Locale.US);
@@ -112,6 +111,15 @@ public final class AccountsSheetForm {
     }
 
     private void writeTotals(ComputedTotals totals) throws IOException {
+      // This is my own thing, but I find it useful: itemize total receipts by category
+      form.setValue("Text24.19", "Total receipts by category:");
+      form.setValue("Text24.20",
+          "Worldwide Work: "
+              + FormHelper.formatMoneyPreserveZero(totals.totalWorldwideReceipts()));
+      form.setValue("Text24.21",
+          "Local Congregation Expense: "
+              + FormHelper.formatMoneyPreserveZero(totals.totalCongregationReceipts()));
+
       // "Totals of all columns" at bottom of page one
       form.setMoneyPreserveZero("Text11", totals.totalReceiptsIn());
       form.setMoneyPreserveZero("Text13", totals.totalReceiptsOut());

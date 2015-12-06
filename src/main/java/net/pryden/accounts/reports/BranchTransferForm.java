@@ -31,9 +31,8 @@ public final class BranchTransferForm {
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);
     try (FormHelper form = FormHelper.create(config.fundsTransferFormPath(), outputFilePath)) {
       new BranchTransferFormGenerator(config, month, form).run();
-      if (console.readConfirmation("Write %s?", outputFilePath)) {
-        form.save();
-      }
+      console.printf("Writing %s\n", outputFilePath);
+      form.save();
     }
   }
 

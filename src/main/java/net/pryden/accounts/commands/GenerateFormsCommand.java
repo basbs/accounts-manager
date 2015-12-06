@@ -3,6 +3,7 @@ package net.pryden.accounts.commands;
 import net.pryden.accounts.Storage;
 import net.pryden.accounts.commands.Annotations.CurrentMonth;
 import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.reports.AccountsReportForm;
 import net.pryden.accounts.reports.AccountsSheetForm;
 import net.pryden.accounts.reports.BranchTransferForm;
 
@@ -15,17 +16,20 @@ final class GenerateFormsCommand implements Command {
   private final YearMonth currentMonth;
   private final AccountsSheetForm accountsSheetForm;
   private final BranchTransferForm branchTransferForm;
+  private final AccountsReportForm accountsReportForm;
 
   @Inject
   GenerateFormsCommand(
       Storage storage,
       @CurrentMonth YearMonth currentMonth,
       AccountsSheetForm accountsSheetForm,
-      BranchTransferForm branchTransferForm) {
+      BranchTransferForm branchTransferForm,
+      AccountsReportForm accountsReportForm) {
     this.storage = storage;
     this.currentMonth = currentMonth;
     this.accountsSheetForm = accountsSheetForm;
     this.branchTransferForm = branchTransferForm;
+    this.accountsReportForm = accountsReportForm;
   }
 
   @Override
@@ -34,6 +38,7 @@ final class GenerateFormsCommand implements Command {
     accountsSheetForm.generate(month);
     if (month.isClosed()) {
       branchTransferForm.generate(month);
+      accountsReportForm.generate(month);
     }
   }
 }

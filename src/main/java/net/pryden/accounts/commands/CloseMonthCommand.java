@@ -48,7 +48,7 @@ final class CloseMonthCommand implements Command {
   public void run() throws Exception {
     AccountsMonth month = storage.readMonth(currentMonth);
     ComputedTotals totals = month.computeTotals();
-    if (!totals.receiptsOutstandingBalance().equals(BigDecimal.ZERO)) {
+    if (totals.receiptsOutstandingBalance().signum() > 0) {
       if (console.readConfirmation("There is a receipts balance of %s remaining. "
           + "Would you like to add a deposit?", totals.receiptsOutstandingBalance())) {
         addDepositCommandProvider.get().run();
@@ -77,7 +77,7 @@ final class CloseMonthCommand implements Command {
       totalTransfer = totalTransfer.add(resolution.amount());
     }
 
-    // TODO(dpryden): Add support for storing the transfer confirmation number
+    // TODO(dpryden): Add support for storing and printing the transfer confirmation number
 
     month = month.withNewTransactions(Transaction.builder()
         .setDate(date)
@@ -88,8 +88,14 @@ final class CloseMonthCommand implements Command {
         .build());
     month = month.toBuilder().setIsClosed(true).build();
     Config updatedConfig = config.toBuilder().setCurrentMonth(currentMonth.plusMonths(1)).build();
+    AccountsMonth newMonth = AccountsMonth.builder()
+        .setDate(currentMonth.plusMonths(1))
+        .setOpeningBalance(totals.checkingBalance())
+        .setReceiptsCarriedForward(totals.receiptsOutstandingBalance())
+        .build();
     if (console.readConfirmation("Confirm closing month %s", currentMonth)) {
       storage.writeMonth(month);
+      storage.writeMonth(newMonth);
       storage.updateConfig(updatedConfig);
     }
     if (console.readConfirmation("Generate PDFs for %s?", currentMonth)) {

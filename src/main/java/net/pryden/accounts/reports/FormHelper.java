@@ -45,17 +45,17 @@ final class FormHelper implements AutoCloseable {
     this.outputFile = outputFile;
   }
 
-  private PDField getField(String fieldName) {
+  private <T extends PDField> T getField(String fieldName, Class<T> fieldType) {
     PDField field = form.getField(fieldName);
     if (field == null) {
       throw new IllegalArgumentException(
           String.format("No such field %s in form %s", fieldName, formFilePath));
     }
-    return field;
+    return fieldType.cast(field);
   }
 
   void setValue(String fieldName, String value) throws IOException {
-    ((PDTextField) getField(fieldName)).setValue(value);
+    getField(fieldName, PDTextField.class).setValue(value);
   }
 
   void setMoney(String fieldName, BigDecimal value) throws IOException {
@@ -67,7 +67,7 @@ final class FormHelper implements AutoCloseable {
   }
 
   void setCheckBox(String fieldName, boolean checked) throws IOException {
-    PDCheckbox checkbox = ((PDCheckbox) getField(fieldName));
+    PDCheckbox checkbox = getField(fieldName, PDCheckbox.class);
     if (checked) {
       checkbox.check();
     } else {
@@ -75,19 +75,28 @@ final class FormHelper implements AutoCloseable {
     }
   }
 
-
   static String formatMoney(BigDecimal value) {
-    if (value.equals(BigDecimal.ZERO)) {
+    if (value.signum() == 0) {
       return "";
     }
     return formatMoneyPreserveZero(value);
   }
 
   static String formatMoneyPreserveZero(BigDecimal value) {
+    if (value.signum() < 0) {
+      return "(" + formatMoneyPreserveZero(value.negate()) + ")";
+    }
     return value.setScale(2, BigDecimal.ROUND_HALF_EVEN).toPlainString();
   }
 
   void save() throws IOException {
+    if (outputFile.exists()) {
+      File backupFile = new File(outputFile.getPath() + ".bak");
+      if (backupFile.exists()) {
+        backupFile.delete();
+      }
+      outputFile.renameTo(backupFile);
+    }
     document.save(outputFile);
   }
 

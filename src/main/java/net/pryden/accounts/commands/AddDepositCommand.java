@@ -28,7 +28,7 @@ final class AddDepositCommand implements Command {
   public void run() throws Exception {
     AccountsMonth month = storage.readMonth(currentMonth);
     ComputedTotals totals = month.computeTotals();
-    if (totals.receiptsOutstandingBalance().equals(BigDecimal.ZERO)) {
+    if (totals.receiptsOutstandingBalance().signum() == 0) {
       if (!console.readConfirmation("There is currently no receipts balance for %s. "
           + "Are you sure you want to make a deposit?", currentMonth)) {
         return;
@@ -36,6 +36,9 @@ final class AddDepositCommand implements Command {
     }
     int date = console.readInt("Date (day of the month): ");
     String description = console.readString("Description [Deposit to checking account]: ");
+    if (description.isEmpty()) {
+      description = "Deposit to checking account";
+    }
     BigDecimal amount = console.readMoney(
         String.format("Amount to deposit [%s]: ", totals.receiptsOutstandingBalance()),
         totals.receiptsOutstandingBalance());
