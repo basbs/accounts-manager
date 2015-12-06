@@ -87,6 +87,7 @@ final class CloseMonthCommand implements Command {
         .setSubTransactions(ImmutableList.copyOf(transferTransactions))
         .build());
     month = month.toBuilder().setIsClosed(true).build();
+    totals = month.computeTotals();
     Config updatedConfig = config.toBuilder().setCurrentMonth(currentMonth.plusMonths(1)).build();
     AccountsMonth newMonth = AccountsMonth.builder()
         .setDate(currentMonth.plusMonths(1))
