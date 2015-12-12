@@ -17,8 +17,14 @@ final class StorageModule {
   @Provides
   @Singleton
   Config provideConfig(Marshaller marshaller, @UserHomeDir String userHomeDir) {
-    Path configFilePath = Paths.get(userHomeDir, Storage.CONFIG_FILE_NAME);
+    Path configFilePath = Paths.get(userHomeDir, DiskStorage.CONFIG_FILE_NAME);
     // TODO(dpryden): Cope with missing config on first time bootstrap
     return marshaller.read(configFilePath, Config.class);
+  }
+
+  @Provides
+  @Singleton
+  Storage provideStorage(DiskStorage storage) {
+    return storage;
   }
 }

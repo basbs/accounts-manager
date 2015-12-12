@@ -22,7 +22,7 @@ import java.util.Locale;
 /**
  * Generates a CheckbookEntries.txt file listing entries as they should be in the checkbook.
  */
-public final class CheckbookEntriesText {
+final class CheckbookEntriesText implements Report {
   private static final String FILENAME = "CheckbookEntries.txt";
 
   private final Console console;
@@ -34,6 +34,12 @@ public final class CheckbookEntriesText {
     this.config = config;
   }
 
+  @Override
+  public boolean isApplicableFor(AccountsMonth month) {
+    return true;
+  }
+
+  @Override
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);

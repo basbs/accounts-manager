@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 /**
  * Represents a TO-62 Record of Electronic Funds Transfer form.
  */
-public final class BranchTransferForm {
+final class BranchTransferForm implements Report {
   private static final String FILENAME = "TO-62-E Record of Electronic Funds Transfer.pdf";
 
   private final Console console;
@@ -26,6 +26,12 @@ public final class BranchTransferForm {
     this.config = config;
   }
 
+  @Override
+  public boolean isApplicableFor(AccountsMonth month) {
+    return month.isClosed();
+  }
+
+  @Override
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);

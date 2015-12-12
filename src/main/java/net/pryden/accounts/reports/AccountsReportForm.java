@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * Represents the S-30 Monthly Congregation Accounts Report form.
  */
-public final class AccountsReportForm {
+final class AccountsReportForm implements Report {
   private static final String FILENAME = "S-30-E Monthly Congregation Accounts Report.pdf";
 
   private final Console console;
@@ -32,6 +32,12 @@ public final class AccountsReportForm {
     this.config = config;
   }
 
+  @Override
+  public boolean isApplicableFor(AccountsMonth month) {
+    return month.isClosed();
+  }
+
+  @Override
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);

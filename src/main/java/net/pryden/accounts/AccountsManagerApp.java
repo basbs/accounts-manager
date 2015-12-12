@@ -4,17 +4,14 @@ import com.google.common.collect.ImmutableList;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
-import net.pryden.accounts.Annotations.SystemIn;
-import net.pryden.accounts.Annotations.SystemOut;
 import net.pryden.accounts.Annotations.UserHomeDir;
 import net.pryden.accounts.commands.Command;
 import net.pryden.accounts.commands.CommandsModule;
 import net.pryden.accounts.commands.CurrentCommand;
+import net.pryden.accounts.reports.ReportsModule;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.InputStream;
-import java.io.PrintStream;
 
 /**
  * Main class that bootstraps the application.
@@ -24,6 +21,7 @@ final class AccountsManagerApp {
   @Component(modules = {
       TopLevelModule.class,
       CommandsModule.class,
+      ReportsModule.class,
       StorageModule.class
   })
   interface Root {
@@ -51,15 +49,8 @@ final class AccountsManagerApp {
     }
 
     @Provides
-    @SystemIn
-    InputStream provideSystemIn() {
-      return System.in;
-    }
-
-    @Provides
-    @SystemOut
-    PrintStream provideSystemOut() {
-      return System.out;
+    Console provideConsole() {
+      return new ConsoleImpl(System.in, System.out);
     }
   }
 

@@ -3,6 +3,7 @@ package net.pryden.accounts;
 import static com.google.common.truth.Truth.assertThat;
 
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.testing.FakeConsole;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public final class MarshallerTest {
 
   @Before
   public void setUp() throws IOException {
-    marshaller = new Marshaller(TestConsoleFactory.createWithoutExpectedInput().console());
+    marshaller = new Marshaller(new FakeConsole());
     path = temp.newFile("temp_config.yaml").toPath();
   }
 

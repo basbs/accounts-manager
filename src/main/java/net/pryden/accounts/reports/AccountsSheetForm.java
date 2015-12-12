@@ -17,7 +17,7 @@ import java.util.Locale;
 /**
  * Represents the S-26 Accounts Sheet form.
  */
-public final class AccountsSheetForm {
+final class AccountsSheetForm implements Report {
   private static final String FILENAME = "S-26-E Accounts Sheet.pdf";
 
   private final Console console;
@@ -29,6 +29,12 @@ public final class AccountsSheetForm {
     this.config = config;
   }
 
+  @Override
+  public boolean isApplicableFor(AccountsMonth month) {
+    return true;
+  }
+
+  @Override
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);

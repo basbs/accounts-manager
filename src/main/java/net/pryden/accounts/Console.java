@@ -1,85 +1,67 @@
 package net.pryden.accounts;
 
 import com.google.common.primitives.Ints;
-import net.pryden.accounts.Annotations.SystemIn;
-import net.pryden.accounts.Annotations.SystemOut;
 
 import javax.annotation.Nullable;
-import javax.inject.Inject;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.math.BigDecimal;
-import java.util.Scanner;
 
 /**
- * Helper class for working with the console.
+ * Helper API for working with the console.
  */
-public final class Console {
-  private final PrintStream out;
-  // Wow, I'm using a Scanner. I never thought I'd see the day. :-)
-  private final Scanner scanner;
+public abstract class Console {
+  /** Prints the given string to the console. */
+  public abstract void print(String message);
 
-  @Inject
-  Console(@SystemIn InputStream in, @SystemOut PrintStream out) {
-    this.out = out;
-    this.scanner = new Scanner(in);
+  /** Prints the given formatted string to the console. */
+  public final void printf(String message, Object... args) {
+    print(String.format(message, args));
   }
 
-  public void print(String message) {
-    out.print(message);
-  }
-
-  public void printf(String message, Object... args) {
-    out.printf(message, args);
-  }
-
-  public PrintStream out() {
-    return out;
-  }
-
-  public boolean readConfirmation(String prompt, Object... args) {
+  /** Prints the given formatted prompt to the console, then reads a boolean response. */
+  public final boolean readConfirmation(String prompt, Object... args) {
     String message = String.format(prompt, args);
-    out.printf("%s [Y/n] ", message);
-    String line = scanner.nextLine();
+    String line = readString(String.format("%s [Y/n] ", message));
     if (line.isEmpty() || line.startsWith("y") || line.startsWith("Y")) {
       return true;
     }
-    out.println("Got negative response, aborting.");
+    print("Got negative response, aborting.\n");
     return false;
   }
 
-  public int readInt(String prompt) {
+  /** Prints the given prompt to the console, then reads an integer response. */
+  public final int readInt(String prompt) {
     while (true) {
-      out.print(prompt);
-      String line = scanner.nextLine();
+      String line = readString(prompt);
       Integer result = Ints.tryParse(line);
       if (result != null) {
         return result;
       }
-      out.printf("Unable to parse \"%s\" as an integer. Please enter a different value.\n", line);
+      printf("Unable to parse \"%s\" as an integer. Please enter a different value.\n", line);
     }
   }
 
-  public String readString(String prompt) {
-    out.print(prompt);
-    return scanner.nextLine();
-  }
+  /** Prints the given prompt to the console, and then reads a string response. */
+  public abstract String readString(String prompt);
 
-  public BigDecimal readMoney(String prompt) {
+  /** Prints the given prompt to the console, and then reads a BigDecimal response. */
+  public final BigDecimal readMoney(String prompt) {
     return readMoney(prompt, null);
   }
 
-  public BigDecimal readMoney(String prompt, @Nullable BigDecimal defaultValue) {
+  /**
+   * Prints the given prompt to the console, and then reads a BigDecimal response. If the user's
+   * response is empty returns the {@code defaultValue} instead.
+   */
+  public final BigDecimal readMoney(String prompt, @Nullable BigDecimal defaultValue) {
     while (true) {
-      out.print(prompt);
-      String line = scanner.nextLine();
+      String line = readString(prompt);
       if (defaultValue != null && line.isEmpty()) {
         return defaultValue;
       }
       try {
         return new BigDecimal(line).setScale(2, BigDecimal.ROUND_HALF_EVEN);
       } catch (NumberFormatException ex) {
-        out.printf("Unable to parse \"%s\" as a decimal. Please enter a different value.\n", line);
+        printf("Unable to parse \"%s\" as a decimal. Please enter a different value.\n", line);
       }
     }
   }
