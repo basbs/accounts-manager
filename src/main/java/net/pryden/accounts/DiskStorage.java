@@ -15,9 +15,9 @@ import java.time.YearMonth;
  * {@link Storage} implementation that stores data in YAML files on disk.
  */
 @Singleton
-public final class DiskStorage implements Storage {
+final class DiskStorage implements Storage {
   static final String CONFIG_FILE_NAME = ".accounts-manager.yaml";
-  private static final String ACCOUNTS_FILE_NAME = "accounts.yaml";
+  static final String ACCOUNTS_FILE_NAME = "accounts.yaml";
 
   private final Path configPath;
   private final String rootDir;

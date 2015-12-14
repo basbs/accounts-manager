@@ -28,6 +28,8 @@ final class AccountsManagerApp {
     AccountsManagerApp app();
   }
 
+  // TODO(dpryden): Extract out TopLevelModule (and probably also StorageModule) into abstract
+  // classes that can be replaced by subclasses in tests.
   @Module
   static final class TopLevelModule {
     private final ImmutableList<String> args;
@@ -50,7 +52,7 @@ final class AccountsManagerApp {
 
     @Provides
     Console provideConsole() {
-      return new ConsoleImpl(System.in, System.out);
+      return new SystemConsole();
     }
   }
 

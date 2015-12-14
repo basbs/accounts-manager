@@ -4,19 +4,25 @@ import net.pryden.accounts.Storage;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.Config;
 
+import javax.annotation.Nullable;
 import java.time.YearMonth;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Fake {@link Storage} implementation for tests.
  */
 public final class FakeStorage implements Storage {
   private final Map<YearMonth, AccountsMonth> storage = new HashMap<>();
-  private Config config;
+  private Optional<Config> config;
 
-  public FakeStorage(Config config) {
-    this.config = config;
+  public FakeStorage() {
+    this(null);
+  }
+
+  public FakeStorage(@Nullable Config config) {
+    this.config = Optional.ofNullable(config);
   }
 
   @Override
@@ -35,11 +41,11 @@ public final class FakeStorage implements Storage {
   }
 
   public Config getConfig() {
-    return config;
+    return config.get();
   }
 
   @Override
   public void updateConfig(Config updatedConfig) {
-    this.config = updatedConfig;
+    this.config = Optional.of(updatedConfig);
   }
 }

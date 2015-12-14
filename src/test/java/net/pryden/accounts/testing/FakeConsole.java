@@ -35,8 +35,9 @@ public final class FakeConsole extends Console {
     return responses.pop();
   }
 
-  public void addExpectedInput(String input) {
+  public FakeConsole addExpectedInput(String input) {
     responses.add(input);
+    return this;
   }
 
   public String getOutput() {
