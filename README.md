@@ -9,6 +9,9 @@ See [the User Guide](docs/user_guide.md) page.
 
 ## Developer documentation
 
+Build Status:
+[![Build Status](https://travis-ci.org/dpryden/accounts-manager.svg?branch=master)](https://travis-ci.org/dpryden/accounts-manager)
+
 ### Building
 
 To build this project you need a recent version of
