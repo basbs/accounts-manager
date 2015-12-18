@@ -3,13 +3,13 @@
 This is a simple utility for making working with jw.org congregation accounts
 forms easier.
 
-## Legal caveat
+## User Documentation
 
-I do not own the copyright in the forms: they must be downloaded from jw.org
-by someone with the appropriate access. This utility simply makes it easier
-to keep track of accounting information and fill in the forms.
+See [the User Guide](docs/user_guide.md) page.
 
-## Building
+## Developer documentation
+
+### Building
 
 To build this project you need a recent version of
 [Apache Maven](http://maven.apache.org/).
@@ -23,7 +23,7 @@ This will create an executable `AccountsManager` script under
 `target/AccountsManager/bin`, and also a zip file of the compiled application
 named `accounts-manager-<version>-full.zip` under `target`.
 
-## About the code
+### About the code
 
 Each month's data is stored in [YAML](http://yaml.org) format. Global
 configuration (e.g. file paths) are also stored as YAML (in the user's
