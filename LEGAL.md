@@ -15,3 +15,4 @@ my own time. I have received confirmation from the Google IARC (email dated
 2015-12-15) that Google has officially released any copyright interest it may
 have held in this work.
 
+This software is licensed under the terms of the [MIT License](LICENSE.md).
