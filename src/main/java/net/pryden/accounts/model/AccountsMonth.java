@@ -7,12 +7,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nullable;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents the accounts information for a given month.
@@ -53,6 +55,15 @@ public abstract class AccountsMonth {
    */
   @JsonProperty("is-closed")
   public abstract boolean isClosed();
+
+  /** The bank reconciliation information for this month. */
+  public abstract Optional<Reconciliation> reconciliation();
+
+  @JsonProperty("reconciliation")
+  @Nullable
+  Reconciliation serializedReconciliation() {
+    return reconciliation().orElse(null);
+  }
 
   /** Returns a {@link Builder} instance initialized with this object's fields. */
   public abstract Builder toBuilder();
@@ -170,6 +181,7 @@ public abstract class AccountsMonth {
       // Default values
       setTransactions(ImmutableList.of());
       setIsClosed(false);
+      setReconciliation(Optional.empty());
     }
 
     public abstract Builder setDate(YearMonth date);
@@ -194,6 +206,17 @@ public abstract class AccountsMonth {
 
     @JsonProperty("is-closed")
     public abstract Builder setIsClosed(boolean isClosed);
+
+    abstract Builder setReconciliation(Optional<Reconciliation> reconciliation);
+
+    public Builder setReconciliation(Reconciliation reconciliation) {
+      return setReconciliation(Optional.of(reconciliation));
+    }
+
+    @JsonProperty("reconciliation")
+    Builder setDeserializedReconciliation(@Nullable Reconciliation reconciliation) {
+      return setReconciliation(Optional.ofNullable(reconciliation));
+    }
 
     public abstract AccountsMonth build();
   }
