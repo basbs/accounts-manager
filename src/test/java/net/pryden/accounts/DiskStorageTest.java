@@ -29,7 +29,7 @@ public final class DiskStorageTest {
   private DiskStorage storage;
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     homeFolder = temp.newFolder("home");
     storageFolder = temp.newFolder("storage");
 
