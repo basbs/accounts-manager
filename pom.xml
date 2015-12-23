@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
+            <version>2.0.0-20151219.212005-1904</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -130,7 +130,7 @@
     </dependencies>
 
     <repositories>
-        <!-- Used so we can grab the latest snapshot version of PDFBox -->
+        <!-- Used so we can grab snapshot versions of PDFBox -->
         <repository>
             <id>ApacheSnapshot</id>
             <name>Apache Repository</name>
