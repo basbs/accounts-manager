@@ -19,6 +19,7 @@ final class HelpCommand implements Command {
             + "    dump-config: Dump the current config data to console.\n"
             + "    dump-month: Dump the current month data to console.\n"
             + "    generate-forms: Generate PDF forms in the current month's folder.\n"
+            + "    reconcile: Reconcile a bank statement with the accounts data.\n"
             + "    help: Show this help.\n"
             + "\n"
             + "Common arguments:\n"

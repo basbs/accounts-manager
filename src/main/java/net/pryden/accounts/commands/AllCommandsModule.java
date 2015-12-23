@@ -58,4 +58,10 @@ public final class AllCommandsModule {
   Command provideHelpCommand(HelpCommand command) {
     return command;
   }
+
+  @Provides(type = Type.MAP)
+  @ForCommand("reconcile")
+  Command provideReconcileCommand(ReconcileCommand command) {
+    return command;
+  }
 }

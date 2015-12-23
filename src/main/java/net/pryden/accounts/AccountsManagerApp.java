@@ -12,6 +12,7 @@ import net.pryden.accounts.reports.ReportsModule;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.time.Clock;
 
 /**
  * Main class that bootstraps the application.
@@ -48,6 +49,11 @@ final class AccountsManagerApp {
     @UserHomeDir
     String provideUserHomeDir() {
       return System.getProperty("user.home");
+    }
+
+    @Provides
+    Clock provideClock() {
+      return Clock.systemDefaultZone();
     }
 
     @Provides
