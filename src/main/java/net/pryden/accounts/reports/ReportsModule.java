@@ -14,11 +14,13 @@ public final class ReportsModule {
       AccountsReportForm accountsReportForm,
       AccountsSheetForm accountsSheetForm,
       BranchTransferForm branchTransferForm,
-      CheckbookEntriesText checkbookEntriesText) {
+      CheckbookEntriesText checkbookEntriesText,
+      ReconciliationText reconciliationText) {
     return ImmutableSet.of(
         accountsReportForm,
         accountsSheetForm,
         branchTransferForm,
-        checkbookEntriesText);
+        checkbookEntriesText,
+        reconciliationText);
   }
 }
