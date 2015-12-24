@@ -8,7 +8,6 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nullable;
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -36,14 +35,14 @@ public abstract class AccountsMonth {
 
   /** The balance at the beginning of the month. */
   @JsonProperty("opening-balance")
-  public abstract BigDecimal openingBalance();
+  public abstract Money openingBalance();
 
   /**
    * The balance of undeposited receipts carried forward from the previous month. Should always be
    * zero if the accounting instructions are being followed correctly.
    */
   @JsonProperty("receipts-carried-forward")
-  public abstract BigDecimal receiptsCarriedForward();
+  public abstract Money receiptsCarriedForward();
 
   /** The transactions this month. */
   @JsonProperty("transactions")
@@ -100,26 +99,26 @@ public abstract class AccountsMonth {
     // method is ever invoked from multiple threads.
     ComputedTotals local = cachedComputedTotals;
     if (local == null) {
-      BigDecimal totalCongregationReceipts = BigDecimal.ZERO;
-      BigDecimal totalWorldwideReceipts = BigDecimal.ZERO;
-      BigDecimal totalReceiptsIn = BigDecimal.ZERO;
-      BigDecimal totalReceiptsOut = BigDecimal.ZERO;
-      BigDecimal totalCheckingIn = BigDecimal.ZERO;
-      BigDecimal totalCheckingOut = BigDecimal.ZERO;
-      BigDecimal totalCongregationExpenses = BigDecimal.ZERO;
-      BigDecimal totalWorldwideTransfer = BigDecimal.ZERO;
-      BigDecimal receiptsBalance = receiptsCarriedForward();
-      BigDecimal checkingBalance = openingBalance();
+      Money totalCongregationReceipts = Money.ZERO;
+      Money totalWorldwideReceipts = Money.ZERO;
+      Money totalReceiptsIn = Money.ZERO;
+      Money totalReceiptsOut = Money.ZERO;
+      Money totalCheckingIn = Money.ZERO;
+      Money totalCheckingOut = Money.ZERO;
+      Money totalCongregationExpenses = Money.ZERO;
+      Money totalWorldwideTransfer = Money.ZERO;
+      Money receiptsBalance = receiptsCarriedForward();
+      Money checkingBalance = openingBalance();
 
       for (Transaction transaction : transactions()) {
-        if (!transaction.receiptsIn().equals(BigDecimal.ZERO)) {
+        if (!transaction.receiptsIn().isZero()) {
           switch (transaction.category()) {
             case WORLDWIDE_WORK:
-              totalWorldwideReceipts = totalWorldwideReceipts.add(transaction.receiptsIn());
+              totalWorldwideReceipts = totalWorldwideReceipts.plus(transaction.receiptsIn());
               break;
 
             case LOCAL_CONGREGATION_EXPENSES:
-              totalCongregationReceipts = totalCongregationReceipts.add(transaction.receiptsIn());
+              totalCongregationReceipts = totalCongregationReceipts.plus(transaction.receiptsIn());
               break;
 
             default:
@@ -128,28 +127,28 @@ public abstract class AccountsMonth {
                       + transaction.category());
           }
         }
-        totalReceiptsIn = totalReceiptsIn.add(transaction.receiptsIn());
-        totalReceiptsOut = totalReceiptsOut.add(transaction.receiptsOut());
-        totalCheckingIn = totalCheckingIn.add(transaction.checkingIn());
-        totalCheckingOut = totalCheckingOut.add(transaction.checkingOut());
+        totalReceiptsIn = totalReceiptsIn.plus(transaction.receiptsIn());
+        totalReceiptsOut = totalReceiptsOut.plus(transaction.receiptsOut());
+        totalCheckingIn = totalCheckingIn.plus(transaction.checkingIn());
+        totalCheckingOut = totalCheckingOut.plus(transaction.checkingOut());
         if (transaction.category() == TransactionCategory.EXPENSE) {
-          totalCongregationExpenses = totalCongregationExpenses.add(transaction.checkingOut());
+          totalCongregationExpenses = totalCongregationExpenses.plus(transaction.checkingOut());
         }
         for (SubTransaction subTransaction : transaction.subTransactions()) {
           if (subTransaction.category() == TransactionCategory.EXPENSE) {
-            totalCongregationExpenses = totalCongregationExpenses.add(subTransaction.amount());
+            totalCongregationExpenses = totalCongregationExpenses.plus(subTransaction.amount());
           }
           if (subTransaction.type()
               == BranchResolutionType.WORLDWIDE_WORK_FROM_CONTRIBUTION_BOXES) {
-            totalWorldwideTransfer = totalWorldwideTransfer.add(subTransaction.amount());
+            totalWorldwideTransfer = totalWorldwideTransfer.plus(subTransaction.amount());
           }
         }
         receiptsBalance = receiptsBalance
-            .add(transaction.receiptsIn())
-            .subtract(transaction.receiptsOut());
+            .plus(transaction.receiptsIn())
+            .minus(transaction.receiptsOut());
         checkingBalance = checkingBalance
-            .add(transaction.checkingIn())
-            .subtract(transaction.checkingOut());
+            .plus(transaction.checkingIn())
+            .minus(transaction.checkingOut());
       }
 
       cachedComputedTotals = local = ComputedTotals.builder()
@@ -163,7 +162,7 @@ public abstract class AccountsMonth {
           .setTotalWorldwideTransfer(totalWorldwideTransfer)
           .setReceiptsOutstandingBalance(receiptsBalance)
           .setCheckingBalance(checkingBalance)
-          .setTotalOfAllBalances(receiptsBalance.add(checkingBalance))
+          .setTotalOfAllBalances(receiptsBalance.plus(checkingBalance))
           .build();
     }
     return local;
@@ -192,10 +191,10 @@ public abstract class AccountsMonth {
     }
 
     @JsonProperty("opening-balance")
-    public abstract Builder setOpeningBalance(BigDecimal openingBalance);
+    public abstract Builder setOpeningBalance(Money openingBalance);
 
     @JsonProperty("receipts-carried-forward")
-    public abstract Builder setReceiptsCarriedForward(BigDecimal receiptsCarriedForward);
+    public abstract Builder setReceiptsCarriedForward(Money receiptsCarriedForward);
 
     public abstract Builder setTransactions(ImmutableList<Transaction> transactions);
 

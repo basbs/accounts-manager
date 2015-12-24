@@ -5,13 +5,13 @@ import net.pryden.accounts.Console;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.ComputedTotals;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.SubTransaction;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
@@ -116,7 +116,7 @@ final class AccountsReportForm implements Report {
       form.setMoneyPreserveZero("Text29", totals.totalCongregationExpenses());
     }
 
-    private void writeExpenditureLine(int index, String description, BigDecimal amount)
+    private void writeExpenditureLine(int index, String description, Money amount)
         throws IOException {
       if (index > 27) {
         throw new IllegalStateException("Too many expenditure lines to fit");
@@ -128,13 +128,13 @@ final class AccountsReportForm implements Report {
     private void populateFundsAvailable() throws IOException {
       // TODO(dpryden): Handle the case where we have non-congregation funds carried over from a
       // previous month. This isn't supposed to happen anyway, but we should handle it if it does.
-      BigDecimal congregationFundsAtBeginningOfMonth = month.openingBalance();
+      Money congregationFundsAtBeginningOfMonth = month.openingBalance();
       form.setMoneyPreserveZero("Text3", congregationFundsAtBeginningOfMonth);
-      BigDecimal surplusOrDeficit =
-          totals.totalCongregationReceipts().subtract(totals.totalCongregationExpenses());
+      Money surplusOrDeficit =
+          totals.totalCongregationReceipts().minus(totals.totalCongregationExpenses());
       form.setMoneyPreserveZero("Text30", surplusOrDeficit);
-      BigDecimal congregationFundsAtEndOfMonth =
-          congregationFundsAtBeginningOfMonth.add(surplusOrDeficit);
+      Money congregationFundsAtEndOfMonth =
+          congregationFundsAtBeginningOfMonth.plus(surplusOrDeficit);
       Preconditions.checkState(congregationFundsAtEndOfMonth.equals(totals.checkingBalance()),
           "Congregation funds at end of month (%s) does not equal checking balance (%s)",
           congregationFundsAtEndOfMonth, totals.checkingBalance());
@@ -145,16 +145,16 @@ final class AccountsReportForm implements Report {
 
     private void populateReconciliation() throws IOException {
       // Total Funds at Beginning of Month
-      BigDecimal totalFundsAtBeginningOfMonth =
-          month.openingBalance().add(month.receiptsCarriedForward());
+      Money totalFundsAtBeginningOfMonth =
+          month.openingBalance().plus(month.receiptsCarriedForward());
       form.setMoneyPreserveZero("Text40", totalFundsAtBeginningOfMonth);
 
       // All Receipts
       form.setMoneyPreserveZero("Text41", totals.totalCongregationReceipts());
       form.setMoneyPreserveZero("Text42", totals.totalWorldwideReceipts());
       // TODO(dpryden): Handle other receipt types
-      BigDecimal totalReceipts =
-          totals.totalCongregationReceipts().add(totals.totalWorldwideReceipts());
+      Money totalReceipts =
+          totals.totalCongregationReceipts().plus(totals.totalWorldwideReceipts());
       Preconditions.checkState(totalReceipts.equals(totals.totalReceiptsIn()),
           "Total of worldwide and congregation receipts (%s) does not match total receipts (%s)",
           totalReceipts, totals.totalReceiptsIn());
@@ -163,16 +163,16 @@ final class AccountsReportForm implements Report {
       // All Disbursements
       form.setMoneyPreserveZero("Text46", totals.totalCongregationExpenses());
       form.setMoneyPreserveZero("Text47", totals.totalWorldwideTransfer());
-      BigDecimal totalDisbursements =
-          totals.totalWorldwideTransfer().add(totals.totalCongregationExpenses());
+      Money totalDisbursements =
+          totals.totalWorldwideTransfer().plus(totals.totalCongregationExpenses());
       Preconditions.checkState(totalDisbursements.equals(totals.totalCheckingOut()),
           "Total disbursements (%s) does not match total out of checking account (%s) ",
           totalDisbursements, totals.totalCheckingOut());
       form.setMoneyPreserveZero("Text50", totalDisbursements);
 
       // Total Funds at End of Month
-      BigDecimal totalFundsAtEndOfMonth =
-          totalFundsAtBeginningOfMonth.add(totalReceipts).subtract(totalDisbursements);
+      Money totalFundsAtEndOfMonth =
+          totalFundsAtBeginningOfMonth.plus(totalReceipts).minus(totalDisbursements);
       Preconditions.checkState(totalFundsAtEndOfMonth.equals(totals.totalOfAllBalances()),
           "Total funds at end of month (%s) does not match final balance (%s)",
           totalFundsAtEndOfMonth, totals.totalOfAllBalances());

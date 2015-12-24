@@ -3,14 +3,13 @@ package net.pryden.accounts.commands;
 import static net.pryden.accounts.model.TransactionCategory.LOCAL_CONGREGATION_EXPENSES;
 import static net.pryden.accounts.model.TransactionCategory.WORLDWIDE_WORK;
 
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.testing.TestHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.math.BigDecimal;
 
 @RunWith(JUnit4.class)
 public final class AddReceiptsCommandTest {
@@ -38,13 +37,13 @@ public final class AddReceiptsCommandTest {
             .setDate(12)
             .setDescription("Contributions - Worldwide Work")
             .setCategory(WORLDWIDE_WORK)
-            .setReceiptsIn(new BigDecimal("42.17"))
+            .setReceiptsIn(Money.parse("42.17"))
             .build(),
         Transaction.builder()
             .setDate(12)
             .setDescription("Contributions - Local Congregation Expenses")
             .setCategory(LOCAL_CONGREGATION_EXPENSES)
-            .setReceiptsIn(new BigDecimal("103.01"))
+            .setReceiptsIn(Money.parse("103.01"))
             .build());
   }
 
@@ -63,7 +62,7 @@ public final class AddReceiptsCommandTest {
             .setDate(7)
             .setDescription("Contributions - Worldwide Work")
             .setCategory(WORLDWIDE_WORK)
-            .setReceiptsIn(new BigDecimal("17.00"))
+            .setReceiptsIn(Money.parse("17.00"))
             .build());
   }
 
@@ -83,7 +82,7 @@ public final class AddReceiptsCommandTest {
             .setDate(6)
             .setDescription("Contributions - Local Congregation Expenses")
             .setCategory(LOCAL_CONGREGATION_EXPENSES)
-            .setReceiptsIn(new BigDecimal("99.99"))
+            .setReceiptsIn(Money.parse("99.99"))
             .build());
   }
 }

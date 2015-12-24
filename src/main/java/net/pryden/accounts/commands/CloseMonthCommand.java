@@ -9,13 +9,13 @@ import net.pryden.accounts.model.BranchResolution;
 import net.pryden.accounts.model.BranchResolutionType;
 import net.pryden.accounts.model.ComputedTotals;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.SubTransaction;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +48,7 @@ final class CloseMonthCommand implements Command {
   public void run() throws Exception {
     AccountsMonth month = storage.readMonth(currentMonth);
     ComputedTotals totals = month.computeTotals();
-    if (totals.receiptsOutstandingBalance().signum() > 0) {
+    if (!totals.receiptsOutstandingBalance().isZero()) {
       if (console.readConfirmation("There is a receipts balance of %s remaining. "
           + "Would you like to add a deposit?", totals.receiptsOutstandingBalance())) {
         addDepositCommandProvider.get().run();
@@ -66,7 +66,7 @@ final class CloseMonthCommand implements Command {
         .setType(BranchResolutionType.WORLDWIDE_WORK_FROM_CONTRIBUTION_BOXES)
         .setAmount(totals.totalWorldwideReceipts())
         .build());
-    BigDecimal totalTransfer = totals.totalWorldwideReceipts();
+    Money totalTransfer = totals.totalWorldwideReceipts();
     for (BranchResolution resolution : config.branchResolutions()) {
       transferTransactions.add(SubTransaction.builder()
           .setDescription(resolution.description())
@@ -74,7 +74,7 @@ final class CloseMonthCommand implements Command {
           .setType(resolution.type())
           .setAmount(resolution.amount())
           .build());
-      totalTransfer = totalTransfer.add(resolution.amount());
+      totalTransfer = totalTransfer.plus(resolution.amount());
     }
 
     // TODO(dpryden): Add support for storing and printing the transfer confirmation number

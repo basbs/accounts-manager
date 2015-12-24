@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 
-import java.math.BigDecimal;
-
 /**
  * Represents a resolution for sending funds to the branch each month as part of the monthly
  * transfer. These are typically used for contributions to the Worldwide Work, to Kingdom Hall and
@@ -35,7 +33,7 @@ public abstract class BranchResolution {
 
   /** The amount to be transferred to the branch each month. */
   @JsonProperty("amount")
-  public abstract BigDecimal amount();
+  public abstract Money amount();
 
   /** Returns a new {@link Builder} instance. */
   public static Builder builder() {
@@ -63,7 +61,7 @@ public abstract class BranchResolution {
     public abstract Builder setType(BranchResolutionType type);
 
     @JsonProperty("amount")
-    public abstract Builder setAmount(BigDecimal amount);
+    public abstract Builder setAmount(Money amount);
 
     public abstract BranchResolution build();
   }

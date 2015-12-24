@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableList;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -27,11 +26,11 @@ public abstract class Reconciliation {
 
   /** The balance from the bank statement. */
   @JsonProperty("statement-balance")
-  public abstract BigDecimal statementBalance();
+  public abstract Money statementBalance();
 
   /** The balance that was reconciled successfully. */
   @JsonProperty("reconciled-balance")
-  public abstract BigDecimal reconciledBalance();
+  public abstract Money reconciledBalance();
 
   /** The outstanding transactions that could not be reconciled. */
   @JsonProperty("unreconciled-transactions")
@@ -55,10 +54,10 @@ public abstract class Reconciliation {
     }
 
     @JsonProperty("statement-balance")
-    public abstract Builder setStatementBalance(BigDecimal statementBalance);
+    public abstract Builder setStatementBalance(Money statementBalance);
 
     @JsonProperty("reconciled-balance")
-    public abstract Builder setReconciledBalance(BigDecimal reconciledBalance);
+    public abstract Builder setReconciledBalance(Money reconciledBalance);
 
     abstract Builder setUnreconciledTransactions(
         ImmutableList<UnreconciledTransaction> unreconciledTransactions);

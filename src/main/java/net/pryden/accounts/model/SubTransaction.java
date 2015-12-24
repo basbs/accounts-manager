@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 
-import java.math.BigDecimal;
-
 /**
  * Represents a sub-transaction (an added line under an existing transaction). Only branch transfers
  * typically have these.
@@ -33,7 +31,7 @@ public abstract class SubTransaction {
 
   /** The amount of this sub-transaction. */
   @JsonProperty("amount")
-  public abstract BigDecimal amount();
+  public abstract Money amount();
 
   /** Returns a new {@link Builder} instance. */
   public static Builder builder() {
@@ -61,7 +59,7 @@ public abstract class SubTransaction {
     public abstract Builder setType(BranchResolutionType type);
 
     @JsonProperty("amount")
-    public abstract Builder setAmount(BigDecimal amount);
+    public abstract Builder setAmount(Money amount);
 
     public abstract SubTransaction build();
   }

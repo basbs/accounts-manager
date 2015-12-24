@@ -4,11 +4,11 @@ import net.pryden.accounts.Console;
 import net.pryden.accounts.Storage;
 import net.pryden.accounts.commands.Annotations.CurrentMonth;
 import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +28,11 @@ final class AddReceiptsCommand implements Command {
   @Override
   public void run() throws Exception {
     int date = console.readInt("Date (day of the month): ");
-    BigDecimal worldwide = console.readMoney("Worldwide Work: ", BigDecimal.ZERO);
-    BigDecimal cong = console.readMoney("Local Congregation Expenses: ", BigDecimal.ZERO);
+    Money worldwide = console.readMoney("Worldwide Work: ", Money.ZERO);
+    Money cong = console.readMoney("Local Congregation Expenses: ", Money.ZERO);
 
     List<Transaction> transactions = new ArrayList<>();
-    if (!cong.equals(BigDecimal.ZERO)) {
+    if (!cong.isZero()) {
       transactions.add(Transaction.builder()
           .setDate(date)
           .setDescription("Contributions - Local Congregation Expenses")
@@ -40,7 +40,7 @@ final class AddReceiptsCommand implements Command {
           .setReceiptsIn(cong)
           .build());
     }
-    if (!worldwide.equals(BigDecimal.ZERO)) {
+    if (!worldwide.isZero()) {
       transactions.add(Transaction.builder()
           .setDate(date)
           .setDescription("Contributions - Worldwide Work")

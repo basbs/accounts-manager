@@ -3,6 +3,7 @@ package net.pryden.accounts.commands;
 import static com.google.common.truth.Truth.assertThat;
 
 import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 import net.pryden.accounts.testing.TestHelper;
@@ -10,8 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.math.BigDecimal;
 
 @RunWith(JUnit4.class)
 public final class AddDepositCommandTest {
@@ -36,7 +35,7 @@ public final class AddDepositCommandTest {
 
   @Test
   public void testDepositExistingReceipts() throws Exception {
-    BigDecimal receipts = new BigDecimal("103.00");
+    Money receipts = Money.parse("103.00");
     helper.writeEmptyMonth();
     helper.addTransactions(
         Transaction.builder()

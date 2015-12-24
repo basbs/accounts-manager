@@ -5,11 +5,11 @@ import net.pryden.accounts.Storage;
 import net.pryden.accounts.commands.Annotations.CurrentMonth;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.ComputedTotals;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.time.YearMonth;
 
 final class AddDepositCommand implements Command {
@@ -28,7 +28,7 @@ final class AddDepositCommand implements Command {
   public void run() throws Exception {
     AccountsMonth month = storage.readMonth(currentMonth);
     ComputedTotals totals = month.computeTotals();
-    if (totals.receiptsOutstandingBalance().signum() == 0) {
+    if (totals.receiptsOutstandingBalance().isZero()) {
       if (!console.readConfirmation("There is currently no receipts balance for %s. "
           + "Are you sure you want to make a deposit?", currentMonth)) {
         return;
@@ -39,7 +39,7 @@ final class AddDepositCommand implements Command {
     if (description.isEmpty()) {
       description = "Deposit to checking account";
     }
-    BigDecimal amount = console.readMoney(
+    Money amount = console.readMoney(
         String.format("Amount to deposit [%s]: ", totals.receiptsOutstandingBalance()),
         totals.receiptsOutstandingBalance());
 

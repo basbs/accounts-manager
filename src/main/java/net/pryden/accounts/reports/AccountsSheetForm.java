@@ -111,7 +111,8 @@ final class AccountsSheetForm implements Report {
     private void writeSubGridLine(int index, SubTransaction subTransaction) throws IOException {
       checkGridIndex(index);
       String description = String.format("%s [%s]",
-          subTransaction.description(), FormHelper.formatMoney(subTransaction.amount()));
+          subTransaction.description(),
+          subTransaction.amount().toFormattedStringPreserveZero());
       form.setValue("Text8.0." + index, description);
       form.setValue("Text9." + index, subTransaction.category().codeAsString());
     }
@@ -121,10 +122,10 @@ final class AccountsSheetForm implements Report {
       form.setValue("Text24.19", "Total receipts by category:");
       form.setValue("Text24.20",
           "Worldwide Work: "
-              + FormHelper.formatMoneyPreserveZero(totals.totalWorldwideReceipts()));
+              + totals.totalWorldwideReceipts().toFormattedStringPreserveZero());
       form.setValue("Text24.21",
           "Local Congregation Expense: "
-              + FormHelper.formatMoneyPreserveZero(totals.totalCongregationReceipts()));
+              + totals.totalCongregationReceipts().toFormattedStringPreserveZero());
 
       // "Totals of all columns" at bottom of page one
       form.setMoneyPreserveZero("Text11", totals.totalReceiptsIn());

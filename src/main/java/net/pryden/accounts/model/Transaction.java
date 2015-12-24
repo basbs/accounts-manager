@@ -6,8 +6,6 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 
-import java.math.BigDecimal;
-
 /**
  * Represents a single transaction (one line in the accounts sheet).
  *
@@ -37,19 +35,29 @@ public abstract class Transaction implements Comparable<Transaction> {
 
   /** The value of money received as receipts. */
   @JsonProperty("receipts-in")
-  public abstract BigDecimal receiptsIn();
+  public abstract Money receiptsIn();
 
   /** The value of money being deposited or otherwise spent out of receipts. */
   @JsonProperty("receipts-out")
-  public abstract BigDecimal receiptsOut();
+  public abstract Money receiptsOut();
 
   /** The value of money being deposited into the checking account. */
   @JsonProperty("checking-in")
-  public abstract BigDecimal checkingIn();
+  public abstract Money checkingIn();
 
   /** The value of money being spent out of the checking account. */
   @JsonProperty("checking-out")
-  public abstract BigDecimal checkingOut();
+  public abstract Money checkingOut();
+
+  /** Returns whether this transaction has zero value (either in or out) in the receipts columns. */
+  public boolean isZeroReceipts() {
+    return receiptsIn().isZero() && receiptsOut().isZero();
+  }
+
+  /** Returns whether this transaction has zero value (either in or out) in the checking columns. */
+  public boolean isZeroChecking() {
+    return checkingIn().isZero() && checkingOut().isZero();
+  }
 
   /**
    * Sub-transactions of this transaction. Only branch transfers typically have these.
@@ -75,10 +83,10 @@ public abstract class Transaction implements Comparable<Transaction> {
   public abstract static class Builder {
     Builder() {
       // Default values
-      setReceiptsIn(BigDecimal.ZERO);
-      setReceiptsOut(BigDecimal.ZERO);
-      setCheckingIn(BigDecimal.ZERO);
-      setCheckingOut(BigDecimal.ZERO);
+      setReceiptsIn(Money.ZERO);
+      setReceiptsOut(Money.ZERO);
+      setCheckingIn(Money.ZERO);
+      setCheckingOut(Money.ZERO);
       setSubTransactions(ImmutableList.of());
     }
 
@@ -96,16 +104,16 @@ public abstract class Transaction implements Comparable<Transaction> {
     public abstract Builder setCategory(TransactionCategory category);
 
     @JsonProperty("receipts-in")
-    public abstract Builder setReceiptsIn(BigDecimal receiptsIn);
+    public abstract Builder setReceiptsIn(Money receiptsIn);
 
     @JsonProperty("receipts-out")
-    public abstract Builder setReceiptsOut(BigDecimal receiptsOut);
+    public abstract Builder setReceiptsOut(Money receiptsOut);
 
     @JsonProperty("checking-in")
-    public abstract Builder setCheckingIn(BigDecimal checkingIn);
+    public abstract Builder setCheckingIn(Money checkingIn);
 
     @JsonProperty("checking-out")
-    public abstract Builder setCheckingOut(BigDecimal checkingOut);
+    public abstract Builder setCheckingOut(Money checkingOut);
 
     public abstract Builder setSubTransactions(ImmutableList<SubTransaction> subTransactions);
 

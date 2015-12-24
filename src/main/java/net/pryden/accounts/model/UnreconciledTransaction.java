@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -33,7 +32,7 @@ public abstract class UnreconciledTransaction {
    * or negative in the case of an unreconciled expense.
    */
   @JsonProperty("amount")
-  public abstract BigDecimal amount();
+  public abstract Money amount();
 
   /** Returns a new {@link Builder} instance. */
   public static Builder builder() {
@@ -56,7 +55,7 @@ public abstract class UnreconciledTransaction {
     }
 
     @JsonProperty("amount")
-    public abstract Builder setAmount(BigDecimal checkingIn);
+    public abstract Builder setAmount(Money checkingIn);
 
     public abstract UnreconciledTransaction build();
   }

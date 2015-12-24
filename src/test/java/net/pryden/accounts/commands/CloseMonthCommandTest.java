@@ -7,6 +7,7 @@ import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.BranchResolution;
 import net.pryden.accounts.model.BranchResolutionType;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.SubTransaction;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
@@ -16,7 +17,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.math.BigDecimal;
 import java.time.YearMonth;
 
 @RunWith(JUnit4.class)
@@ -50,9 +50,9 @@ public final class CloseMonthCommandTest {
   @Test
   public void testClosingMonth() throws Exception {
     String worldwideResolutionDescription = "{{worldwide resolution}}";
-    BigDecimal worldwideResolutionAmount = new BigDecimal("100.00");
+    Money worldwideResolutionAmount = Money.parse("100.00");
     String gaaResolutionDescription = "{{GAA resolution}}";
-    BigDecimal gaaResolutionAmount = new BigDecimal("75.00");
+    Money gaaResolutionAmount = Money.parse("75.00");
 
     Config config = helper.storage().getConfig();
     config = config.toBuilder()
@@ -73,10 +73,10 @@ public final class CloseMonthCommandTest {
         .build();
     helper.storage().updateConfig(config);
 
-    BigDecimal worldwide1 = new BigDecimal("101.01");
-    BigDecimal worldwide2 = new BigDecimal("202.02");
-    BigDecimal local1 = new BigDecimal("66.11");
-    BigDecimal local2 = new BigDecimal("33.77");
+    Money worldwide1 = Money.parse("101.01");
+    Money worldwide2 = Money.parse("202.02");
+    Money local1 = Money.parse("66.11");
+    Money local2 = Money.parse("33.77");
 
     YearMonth monthToClose = helper.currentMonth();
 
@@ -97,8 +97,8 @@ public final class CloseMonthCommandTest {
             .setDate(2)
             .setDescription("deposit1")
             .setCategory(TransactionCategory.DEPOSIT)
-            .setReceiptsOut(worldwide1.add(local1))
-            .setCheckingIn(worldwide1.add(local1))
+            .setReceiptsOut(worldwide1.plus(local1))
+            .setCheckingIn(worldwide1.plus(local1))
             .build(),
         Transaction.builder()
             .setDate(3)
@@ -116,8 +116,8 @@ public final class CloseMonthCommandTest {
             .setDate(4)
             .setDescription("deposit2")
             .setCategory(TransactionCategory.DEPOSIT)
-            .setReceiptsOut(worldwide2.add(local2))
-            .setCheckingIn(worldwide2.add(local2))
+            .setReceiptsOut(worldwide2.plus(local2))
+            .setCheckingIn(worldwide2.plus(local2))
             .build());
 
     helper.console()
@@ -142,9 +142,9 @@ public final class CloseMonthCommandTest {
     assertThat(transfer.category()).isEqualTo(TransactionCategory.OTHER);
     assertThat(transfer.checkingOut())
         .isEqualTo(worldwide1
-            .add(worldwide2)
-            .add(worldwideResolutionAmount)
-            .add(gaaResolutionAmount));
+            .plus(worldwide2)
+            .plus(worldwideResolutionAmount)
+            .plus(gaaResolutionAmount));
 
     // Verify the sub-transactions
     assertThat(transfer.subTransactions())
@@ -153,7 +153,7 @@ public final class CloseMonthCommandTest {
                 .setDescription("Worldwide Work")
                 .setCategory(TransactionCategory.WORLDWIDE_WORK)
                 .setType(BranchResolutionType.WORLDWIDE_WORK_FROM_CONTRIBUTION_BOXES)
-                .setAmount(worldwide1.add(worldwide2))
+                .setAmount(worldwide1.plus(worldwide2))
                 .build(),
             SubTransaction.builder()
                 .setDescription(worldwideResolutionDescription)

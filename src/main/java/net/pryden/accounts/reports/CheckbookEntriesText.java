@@ -1,18 +1,18 @@
 package net.pryden.accounts.reports;
 
 import com.google.common.base.Strings;
-import com.google.common.io.Files;
 import net.pryden.accounts.Console;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Writer;
-import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -43,17 +43,16 @@ final class CheckbookEntriesText implements Report {
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);
-    try (Writer out = Files.newWriter(outputFilePath.toFile(), StandardCharsets.UTF_8)) {
-      BigDecimal balance = month.openingBalance();
+    try (Writer out = Files.newBufferedWriter(outputFilePath, StandardCharsets.UTF_8)) {
+      Money balance = month.openingBalance();
       out.append(buildLine(null, "Opening balance", null, null, balance));
 
       for (Transaction transaction : month.transactions()) {
         LocalDate date = month.date().atDay(transaction.date());
-        if (transaction.checkingIn().signum() == 0
-          && transaction.checkingOut().signum() == 0) {
+        if (transaction.checkingIn().isZero() && transaction.checkingOut().isZero()) {
           continue;
         }
-        balance = balance.add(transaction.checkingIn()).subtract(transaction.checkingOut());
+        balance = balance.plus(transaction.checkingIn()).minus(transaction.checkingOut());
         out.append(
             buildLine(
                 date,
@@ -71,9 +70,9 @@ final class CheckbookEntriesText implements Report {
   private String buildLine(
       @Nullable LocalDate date,
       String description,
-      @Nullable BigDecimal checkingOut,
-      @Nullable BigDecimal checkingIn,
-      BigDecimal balance) {
+      @Nullable Money checkingOut,
+      @Nullable Money checkingIn,
+      Money balance) {
     StringBuilder sb = new StringBuilder();
     if (date == null) {
       sb.append("      ");
@@ -89,10 +88,10 @@ final class CheckbookEntriesText implements Report {
     return sb.toString();
   }
 
-  private String getPaddedMoney(@Nullable BigDecimal amount) {
+  private String getPaddedMoney(@Nullable Money amount) {
     if (amount == null) {
       return "          ";
     }
-    return Strings.padStart(FormHelper.formatMoney(amount), 10, ' ');
+    return amount.toPaddedString(10);
   }
 }

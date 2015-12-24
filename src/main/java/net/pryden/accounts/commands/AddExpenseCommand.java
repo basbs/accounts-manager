@@ -4,11 +4,11 @@ import net.pryden.accounts.Console;
 import net.pryden.accounts.Storage;
 import net.pryden.accounts.commands.Annotations.CurrentMonth;
 import net.pryden.accounts.model.AccountsMonth;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
 import javax.inject.Inject;
-import java.math.BigDecimal;
 import java.time.YearMonth;
 
 final class AddExpenseCommand implements Command {
@@ -27,7 +27,7 @@ final class AddExpenseCommand implements Command {
   public void run() throws Exception {
     int date = console.readInt("Date (day of the month): ");
     String description = console.readString("Transaction description: ");
-    BigDecimal amount = console.readMoney("Amount: ");
+    Money amount = console.readMoney("Amount: ");
 
     AccountsMonth month = storage.readMonth(currentMonth);
     AccountsMonth updated = month.withNewTransactions(Transaction.builder()

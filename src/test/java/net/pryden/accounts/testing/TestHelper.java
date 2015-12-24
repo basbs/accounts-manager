@@ -3,9 +3,9 @@ package net.pryden.accounts.testing;
 import com.google.common.truth.Truth;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
 import net.pryden.accounts.model.Transaction;
 
-import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Arrays;
 
@@ -63,8 +63,8 @@ public final class TestHelper {
   public AccountsMonth newEmptyMonth(YearMonth yearMonth) {
     return AccountsMonth.builder()
         .setDate(yearMonth)
-        .setOpeningBalance(BigDecimal.ZERO)
-        .setReceiptsCarriedForward(BigDecimal.ZERO)
+        .setOpeningBalance(Money.ZERO)
+        .setReceiptsCarriedForward(Money.ZERO)
         .build();
   }
 

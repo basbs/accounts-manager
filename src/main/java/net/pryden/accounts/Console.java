@@ -1,9 +1,9 @@
 package net.pryden.accounts;
 
 import com.google.common.primitives.Ints;
+import net.pryden.accounts.model.Money;
 
 import javax.annotation.Nullable;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -43,25 +43,26 @@ public abstract class Console {
   /** Prints the given prompt to the console, and then reads a string response. */
   public abstract String readString(String prompt);
 
-  /** Prints the given prompt to the console, and then reads a BigDecimal response. */
-  public final BigDecimal readMoney(String prompt) {
+  /** Prints the given prompt to the console, and then reads a Money response. */
+  public final Money readMoney(String prompt) {
     return readMoney(prompt, null);
   }
 
   /**
-   * Prints the given prompt to the console, and then reads a BigDecimal response. If the user's
+   * Prints the given prompt to the console, and then reads a Money response. If the user's
    * response is empty returns the {@code defaultValue} instead.
    */
-  public final BigDecimal readMoney(String prompt, @Nullable BigDecimal defaultValue) {
+  public final Money readMoney(String prompt, @Nullable Money defaultValue) {
     while (true) {
       String line = readString(prompt);
       if (defaultValue != null && line.isEmpty()) {
         return defaultValue;
       }
       try {
-        return new BigDecimal(line).setScale(2, BigDecimal.ROUND_HALF_EVEN);
-      } catch (NumberFormatException ex) {
-        printf("Unable to parse \"%s\" as a decimal. Please enter a different value.\n", line);
+        return Money.parse(line);
+      } catch (IllegalArgumentException ex) {
+        printf("Unable to parse \"%s\" as an amount of money. Please enter a different value.\n",
+            line);
       }
     }
   }
