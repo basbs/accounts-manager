@@ -2,6 +2,8 @@ package net.pryden.accounts.model;
 
 import autovalue.shaded.com.google.common.common.collect.Iterables;
 import autovalue.shaded.com.google.common.common.collect.Lists;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
@@ -59,6 +61,7 @@ public abstract class AccountsMonth {
   public abstract Optional<Reconciliation> reconciliation();
 
   @JsonProperty("reconciliation")
+  @JsonInclude(Include.NON_NULL)
   @Nullable
   Reconciliation serializedReconciliation() {
     return reconciliation().orElse(null);

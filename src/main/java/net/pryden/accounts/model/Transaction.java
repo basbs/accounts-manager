@@ -1,5 +1,8 @@
 package net.pryden.accounts.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
@@ -50,11 +53,13 @@ public abstract class Transaction implements Comparable<Transaction> {
   public abstract Money checkingOut();
 
   /** Returns whether this transaction has zero value (either in or out) in the receipts columns. */
+  @JsonIgnore
   public boolean isZeroReceipts() {
     return receiptsIn().isZero() && receiptsOut().isZero();
   }
 
   /** Returns whether this transaction has zero value (either in or out) in the checking columns. */
+  @JsonIgnore
   public boolean isZeroChecking() {
     return checkingIn().isZero() && checkingOut().isZero();
   }
@@ -63,6 +68,7 @@ public abstract class Transaction implements Comparable<Transaction> {
    * Sub-transactions of this transaction. Only branch transfers typically have these.
    */
   @JsonProperty("sub-transactions")
+  @JsonInclude(Include.NON_EMPTY)
   public abstract ImmutableList<SubTransaction> subTransactions();
 
   @Override

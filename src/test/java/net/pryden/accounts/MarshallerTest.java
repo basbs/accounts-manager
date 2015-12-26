@@ -2,7 +2,12 @@ package net.pryden.accounts;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.common.collect.ImmutableList;
+import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.Config;
+import net.pryden.accounts.model.Money;
+import net.pryden.accounts.model.Transaction;
+import net.pryden.accounts.model.TransactionCategory;
 import net.pryden.accounts.testing.FakeConsole;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,13 +47,37 @@ public final class MarshallerTest {
       + "root-dir: /home/user/accounts\n"
       + "current-month: 2015-11\n";
 
+  private static final AccountsMonth SAMPLE_MONTH = AccountsMonth.builder()
+      .setDate(YearMonth.of(2015, 11))
+      .setOpeningBalance(Money.ZERO)
+      .setReceiptsCarriedForward(Money.ZERO)
+      .setTransactions(
+          ImmutableList.of(
+              Transaction.builder()
+                  .setDate(1)
+                  .setDescription("Contributions - Worldwide Work")
+                  .setCategory(TransactionCategory.WORLDWIDE_WORK)
+                  .setReceiptsIn(Money.parse("101.01"))
+                  .build()))
+      .build();
+
+  private static final String SAMPLE_MONTH_STRING = ""
+      + "date: 2015-11\n"
+      + "opening-balance: 0.00\n"
+      + "receipts-carried-forward: 0.00\n"
+      + "transactions:\n"
+      + "  - date: 1\n"
+      + "    description: \"Contributions - Worldwide Work\"\n"
+      + "    category: WORLDWIDE_WORK\n"
+      + "    receipts-in: 101.01\n";
+
   private Marshaller marshaller;
   private Path path;
 
   @Before
   public void setUp() throws IOException {
     marshaller = new Marshaller(new FakeConsole());
-    path = temp.newFile("temp_config.yaml").toPath();
+    path = temp.newFile("temp.yaml").toPath();
   }
 
   @Test
@@ -65,5 +94,21 @@ public final class MarshallerTest {
 
     Config config = marshaller.read(path, Config.class);
     assertThat(config).isEqualTo(SAMPLE_CONFIG);
+  }
+
+  @Test
+  public void testAccountsMonthRoundTrip() {
+    marshaller.write(path, SAMPLE_MONTH);
+
+    AccountsMonth roundTrip = marshaller.read(path, AccountsMonth.class);
+    assertThat(roundTrip).isEqualTo(SAMPLE_MONTH);
+  }
+
+  @Test
+  public void testReadSampleAccountsMonth() throws Exception {
+    Files.write(path, SAMPLE_MONTH_STRING.getBytes(StandardCharsets.UTF_8));
+
+    AccountsMonth month = marshaller.read(path, AccountsMonth.class);
+    assertThat(month).isEqualTo(SAMPLE_MONTH);
   }
 }
