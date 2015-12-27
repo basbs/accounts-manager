@@ -1,0 +1,45 @@
+#
+# Configuration file for Accounts Manager.
+#
+# Copy this file to a file named .accounts-manager.yaml in your home directory,
+# and edit it to update your configuration.
+#
+# Note that this file will be overwritten when configuration information is
+# updated from within the program, and these comments will not be preserved.
+#
+
+#
+# Congregation information. This is used to fill out the congregation fields
+# in various forms.
+#
+congregation-name: "Congregation Name"
+congregation-city: "Congregation City"
+congregation-state: "California"
+
+#
+# Paths to PDF forms. These forms must be downloaded from jw.org.
+#
+accounts-sheet-form-path: "/path/to/S-26-E.pdf"
+funds-transfer-form-path: "/path/to/TO-62-E.pdf"
+accounts-report-form-path: "/path/to/S-30-E.pdf"
+
+#
+# Path to where you want the congregation accounts information to be stored.
+# Each month's data will be stored in its own folder beneath this folder.
+#
+root-dir: "/Congregation/Accounts"
+
+#
+# Resolutions that affect each month's transfer to the branch. You can omit
+# this section if you don't have any active resolutions.
+#
+branch-resolutions:
+- description: "KH & Ass'y Hall Construct. Worldwide (res.)"
+  type: "KINGDOM_HALL_AND_ASSEMBLY_HALL_WORLDWIDE"
+  amount: 100.00
+  category: "E"
+
+#
+# The current month is the one used by default by most commands.
+#
+current-month: "2015-12"

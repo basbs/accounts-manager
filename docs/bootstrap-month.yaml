@@ -1,0 +1,39 @@
+#
+# This shows a minimal month's accounts.yaml file. You will need at least one
+# minimal month to start out with.
+#
+# This file should be named "accounts.yaml" and stored in the corresponding
+# month's folder.
+#
+
+# The month, in YYYY-MM format.
+date: "2015-10"
+
+# These balances don't have to be accurate, but we have to start somewhere,
+# and the program doesn't allow them to be empty.
+opening-balance: 0.00
+receipts-carried-forward: 0.00
+
+# This month is closed: no new transactions can be added to it.
+is-closed: true
+
+# This is the important part: the most recent reconciliation.
+reconciliation:
+  # The reconciliation here is also bogus, except for the unreconciled transactions.
+  # We need one month like this to be able to reconcile the next month.
+  date-reconciled: "2015-10-31"
+  statement-balance: 0.00
+  reconciled-balance: 0.00
+
+  # These are the outstanding deposits and expenses that were not included in
+  # this month's bank statement. We will look for them on next month's
+  # statement.
+  unreconciled-transactions:
+      - date: "2015-10-31"
+        description: "Deposit to checking account"
+        amount: 83.18
+
+      - date: "2015-10-31"
+        description: "jw.org Transfer #123456789"
+        # Note that expenses are entered as negative numbers here.
+        amount: -1914.00

@@ -1,0 +1,16 @@
+#
+# An example month to get started with.
+#
+# This file should be named "accounts.yaml" and stored in the corresponding
+# month's folder.
+#
+
+# The date of the current month, in YYYY-MM format.
+date: "YYYY-MM"
+
+# The opening balance in the checking account for this month.
+opening-balance: 0.00
+
+# The amount of receipts carried forward from the previous month. If accounting
+# procedures are being followed correctly, this should be zero.
+receipts-carried-forward: 0.00

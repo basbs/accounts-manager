@@ -9,7 +9,7 @@ final class HelpCommand implements Command {
   public void run() {
     // TODO(dpryden): It would be slick if help could be auto-generated.
     System.out.print(
-        "Usage: AccountsManagerApp <command> [args]\n"
+        "Usage: AccountsManager <command> [args]\n"
             + "\n"
             + "Commands:\n"
             + "    add-deposit: Adds a deposit to the current month.\n"

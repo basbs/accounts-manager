@@ -7,7 +7,21 @@
     </formats>
     <fileSets>
         <fileSet>
+            <includes>
+                <include>LEGAL.md</include>
+                <include>LICENSE.md</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>docs</directory>
+            <outputDirectory>docs</outputDirectory>
+            <includes>
+                <include>/**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
             <directory>${project.build.directory}/AccountsManager</directory>
+            <outputDirectory/>
             <includes>
                 <include>/**</include>
             </includes>
