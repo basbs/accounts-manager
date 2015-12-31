@@ -29,6 +29,7 @@ public final class AddExpenseCommandTest {
     helper.console()
         .addExpectedInput(String.valueOf(date) /* day of the month */)
         .addExpectedInput(description /* transaction description */)
+        .addExpectedInput("" /* accept default summary description */)
         .addExpectedInput(amount.toFormattedString() /* amount */)
         .addExpectedInput("Y" /* confirmation */);
 
@@ -38,6 +39,32 @@ public final class AddExpenseCommandTest {
         Transaction.builder()
             .setDate(date)
             .setDescription(description)
+            .setCategory(TransactionCategory.EXPENSE)
+            .setCheckingOut(amount)
+            .build());
+  }
+
+  @Test
+  public void testAddExpense_withSummaryTransaction() throws Exception {
+    int date = 3;
+    String description = "{{transaction description}}";
+    String summaryDescription = "{{summary description}}";
+    Money amount = Money.parse("99.11");
+
+    helper.console()
+        .addExpectedInput(String.valueOf(date) /* day of the month */)
+        .addExpectedInput(description /* transaction description */)
+        .addExpectedInput(summaryDescription /* summary description */)
+        .addExpectedInput(amount.toFormattedString() /* amount */)
+        .addExpectedInput("Y" /* confirmation */);
+
+    command.run();
+
+    helper.assertAllTransactions(
+        Transaction.builder()
+            .setDate(date)
+            .setDescription(description)
+            .setSummaryDescription(summaryDescription)
             .setCategory(TransactionCategory.EXPENSE)
             .setCheckingOut(amount)
             .build());

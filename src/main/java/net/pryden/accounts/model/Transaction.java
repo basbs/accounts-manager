@@ -9,6 +9,9 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 /**
  * Represents a single transaction (one line in the accounts sheet).
  *
@@ -27,6 +30,23 @@ public abstract class Transaction implements Comparable<Transaction> {
   /** The description of the transaction. */
   @JsonProperty("description")
   public abstract String description();
+
+  /**
+   * A summarized description of the transaction, for use in the monthly accounts report.
+   * If no summary description is provided the normal {@link #description()} is used instead.
+   */
+  public String summaryDescription() {
+    return optionalSummaryDescription().orElse(description());
+  }
+
+  abstract Optional<String> optionalSummaryDescription();
+
+  @JsonProperty("summary-description")
+  @JsonInclude(Include.NON_NULL)
+  @Nullable
+  String serializedSummaryDescription() {
+    return optionalSummaryDescription().orElse(null);
+  }
 
   /** The category of the transaction. */
   public abstract TransactionCategory category();
@@ -89,6 +109,7 @@ public abstract class Transaction implements Comparable<Transaction> {
   public abstract static class Builder {
     Builder() {
       // Default values
+      setOptionalSummaryDescription(Optional.empty());
       setReceiptsIn(Money.ZERO);
       setReceiptsOut(Money.ZERO);
       setCheckingIn(Money.ZERO);
@@ -101,6 +122,20 @@ public abstract class Transaction implements Comparable<Transaction> {
 
     @JsonProperty("description")
     public abstract Builder setDescription(String description);
+
+    @JsonProperty("summary-description")
+    Builder setSerializedSummaryDescription(@Nullable String summaryDescription) {
+      return setOptionalSummaryDescription(Optional.ofNullable(summaryDescription));
+    }
+
+    public Builder setSummaryDescription(String summaryDescriptionText) {
+      return setOptionalSummaryDescription(
+          summaryDescriptionText.isEmpty()
+              ? Optional.empty()
+              : Optional.of(summaryDescriptionText));
+    }
+
+    public abstract Builder setOptionalSummaryDescription(Optional<String> summaryDescription);
 
     @JsonProperty("category")
     Builder setCategory(String category) {

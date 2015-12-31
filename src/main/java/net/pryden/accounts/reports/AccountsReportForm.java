@@ -1,12 +1,14 @@
 package net.pryden.accounts.reports;
 
+import static java.util.stream.Collectors.toList;
+
+import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
 import net.pryden.accounts.Console;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.ComputedTotals;
 import net.pryden.accounts.model.Config;
 import net.pryden.accounts.model.Money;
-import net.pryden.accounts.model.SubTransaction;
 import net.pryden.accounts.model.Transaction;
 import net.pryden.accounts.model.TransactionCategory;
 
@@ -15,7 +17,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Represents the S-30 Monthly Congregation Accounts Report form.
@@ -98,20 +102,25 @@ final class AccountsReportForm implements Report {
     }
 
     private void populateExpenditures() throws IOException {
-      // TODO(dpryden): Support coalescing expenditures by category rather than listing each one
-      // individually here.
-      int index = 13;
+      Set<Expenditure> expenditures = new LinkedHashSet<>();
       for (Transaction transaction : month.transactions()) {
         if (transaction.category() == TransactionCategory.EXPENSE) {
-          writeExpenditureLine(index, transaction.description(), transaction.checkingOut());
-          index += 2;
+          expenditures.add(
+              Expenditure.create(transaction.summaryDescription(), transaction.checkingOut()));
         }
-        for (SubTransaction subTransaction : transaction.subTransactions()) {
-          if (subTransaction.category() == TransactionCategory.EXPENSE) {
-            writeExpenditureLine(index, subTransaction.description(), subTransaction.amount());
-            index += 2;
-          }
-        }
+        expenditures.addAll(
+            transaction
+                .subTransactions()
+                .stream()
+                .filter(t -> t.category() == TransactionCategory.EXPENSE)
+                .map(t -> Expenditure.create(t.description(), t.amount()))
+                .collect(toList()));
+      }
+
+      int index = 13;
+      for (Expenditure expenditure : expenditures) {
+        writeExpenditureLine(index, expenditure.description(), expenditure.amount());
+        index += 2;
       }
       form.setMoneyPreserveZero("Text29", totals.totalCongregationExpenses());
     }
@@ -186,5 +195,16 @@ final class AccountsReportForm implements Report {
       form.setMoneyPreserveZero("Text56", totals.totalOfAllBalances());
       form.setMoneyPreserveZero("Text57", totals.totalWorldwideTransfer());
     }
+  }
+
+  /** Simple holder class for a description and amount. */
+  @AutoValue
+  abstract static class Expenditure {
+    static Expenditure create(String description, Money amount) {
+      return new AutoValue_AccountsReportForm_Expenditure(description, amount);
+    }
+
+    abstract String description();
+    abstract Money amount();
   }
 }

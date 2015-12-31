@@ -27,12 +27,16 @@ final class AddExpenseCommand implements Command {
   public void run() throws Exception {
     int date = console.readInt("Date (day of the month): ");
     String description = console.readString("Transaction description: ");
+    String summaryDescription =
+        console.readString(
+            String.format("Transaction summary (for accounts report) [%s]: ", description));
     Money amount = console.readMoney("Amount: ");
 
     AccountsMonth month = storage.readMonth(currentMonth);
     AccountsMonth updated = month.withNewTransactions(Transaction.builder()
         .setDate(date)
         .setDescription(description)
+        .setSummaryDescription(summaryDescription)
         .setCategory(TransactionCategory.EXPENSE)
         .setCheckingOut(amount)
         .build());
