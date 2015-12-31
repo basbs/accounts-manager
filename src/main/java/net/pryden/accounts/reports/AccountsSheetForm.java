@@ -22,11 +22,13 @@ final class AccountsSheetForm implements Report {
 
   private final Console console;
   private final Config config;
+  private final FormHelper.Factory factory;
 
   @Inject
-  AccountsSheetForm(Console console, Config config) {
+  AccountsSheetForm(Console console, Config config, FormHelper.Factory factory) {
     this.console = console;
     this.config = config;
+    this.factory = factory;
   }
 
   @Override
@@ -38,7 +40,7 @@ final class AccountsSheetForm implements Report {
   public void generate(AccountsMonth month) throws IOException {
     console.print("Generating " + FILENAME + "\n");
     Path outputFilePath = Paths.get(config.rootDir(), month.date().toString(), FILENAME);
-    try (FormHelper form = FormHelper.create(config.accountsSheetFormPath(), outputFilePath)) {
+    try (FormHelper form = factory.create(config.accountsSheetFormPath(), outputFilePath)) {
       new AccountsSheetGenerator(config, month, form).run();
       console.printf("Writing %s\n", outputFilePath);
       form.save();

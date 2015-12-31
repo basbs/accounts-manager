@@ -23,4 +23,9 @@ public final class ReportsModule {
         checkbookEntriesText,
         reconciliationText);
   }
+
+  @Provides
+  FormHelper.Factory provideFormHelperFactory() {
+    return FormHelperImpl.FACTORY;
+  }
 }
