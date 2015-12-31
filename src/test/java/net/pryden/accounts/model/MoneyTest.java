@@ -2,6 +2,7 @@ package net.pryden.accounts.model;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import com.google.common.testing.EqualsTester;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -26,10 +27,12 @@ public final class MoneyTest {
   }
 
   private void assertInvariants(String amount) {
-    assertThat(Money.parse(amount)).isEqualTo(Money.parse(amount));
-    assertThat(Money.parse(amount).toFormattedStringPreserveZero()).isEqualTo(amount);
-    assertThat(Money.parse(amount).plus(Money.parse("0.01"))).isNotEqualTo(Money.parse(amount));
-    assertThat(Money.parse(amount).minus(Money.parse("0.01"))).isNotEqualTo(Money.parse(amount));
+    new EqualsTester()
+        .addEqualityGroup(Money.parse(amount), Money.parse(amount))
+        .addEqualityGroup(Money.parse(amount).toFormattedStringPreserveZero(), amount)
+        .addEqualityGroup(Money.parse(amount).plus(Money.parse("0.01")))
+        .addEqualityGroup(Money.parse(amount).minus(Money.parse("0.01")))
+        .testEquals();
   }
 
   private void assertParsesAs(String toParse, String toCompareTo) {
