@@ -1,9 +1,9 @@
 package net.pryden.accounts.reports;
 
-import static java.util.stream.Collectors.toList;
-
 import com.google.auto.value.AutoValue;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 import net.pryden.accounts.Console;
 import net.pryden.accounts.model.AccountsMonth;
 import net.pryden.accounts.model.ComputedTotals;
@@ -17,9 +17,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * Represents the S-30 Monthly Congregation Accounts Report form.
@@ -104,19 +104,28 @@ final class AccountsReportForm implements Report {
     }
 
     private void populateExpenditures() throws IOException {
-      Set<Expenditure> expenditures = new LinkedHashSet<>();
+      Multimap<String, Expenditure> groupedExpenditures =
+          MultimapBuilder.treeKeys().arrayListValues().build();
       for (Transaction transaction : month.transactions()) {
         if (transaction.category() == TransactionCategory.EXPENSE) {
-          expenditures.add(
+          groupedExpenditures.put(
+              transaction.summaryDescription(),
               Expenditure.create(transaction.summaryDescription(), transaction.checkingOut()));
         }
-        expenditures.addAll(
-            transaction
-                .subTransactions()
-                .stream()
-                .filter(t -> t.category() == TransactionCategory.EXPENSE)
-                .map(t -> Expenditure.create(t.description(), t.amount()))
-                .collect(toList()));
+        transaction.subTransactions()
+            .stream()
+            .filter(t -> t.category() == TransactionCategory.EXPENSE)
+            .forEach(t ->
+                groupedExpenditures.put(
+                    t.description(),
+                    Expenditure.create(t.description(), t.amount())));
+      }
+      List<Expenditure> expenditures = new ArrayList<>();
+      for (String description : groupedExpenditures.keySet()) {
+        Money amount = groupedExpenditures.get(description).stream()
+            .map(Expenditure::amount)
+            .reduce(Money.ZERO, Money::plus);
+        expenditures.add(Expenditure.create(description, amount));
       }
 
       int index = 13;

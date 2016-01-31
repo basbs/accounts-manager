@@ -82,9 +82,17 @@ public final class AccountsReportFormTest {
                     .build(),
                 Transaction.builder()
                     .setDate(17)
-                    .setDescription("Operating expenses")
+                    .setDescription("Operating expenses - #123")
+                    .setSummaryDescription("Standard expenses")
                     .setCategory(TransactionCategory.EXPENSE)
-                    .setCheckingOut(Money.parse("500.00"))
+                    .setCheckingOut(Money.parse("250.00"))
+                    .build(),
+                Transaction.builder()
+                    .setDate(18)
+                    .setDescription("Operating expenses - #124")
+                    .setSummaryDescription("Standard expenses")
+                    .setCategory(TransactionCategory.EXPENSE)
+                    .setCheckingOut(Money.parse("250.00"))
                     .build(),
                 Transaction.builder()
                     .setDate(31)
@@ -120,6 +128,10 @@ public final class AccountsReportFormTest {
     formHelper.assertValue("Text12", "1000.00");
 
     // Congregation expenses
+    formHelper.assertValue("Text13", "KH and AH Construction Worldwide");
+    formHelper.assertValue("Text14", "100.00");
+    formHelper.assertValue("Text15", "Standard expenses");
+    formHelper.assertValue("Text16", "500.00");
     formHelper.assertValue("Text29", "600.00");
 
     // Funds at beginning of month
